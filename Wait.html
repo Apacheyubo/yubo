@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>锁盾</title>
+</head>
+<body>
+	
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>等待分配锁匠</title>
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!-- 引入weui样式 -->
+    <link rel="stylesheet" href="lockcss/weui.css">
+	<!-- 引入jq-weui样式 -->
+	<link rel="stylesheet" href="lockcss/jquery-weui.min.css">
+	<!-- 引入全局样式 -->
+    <link rel="stylesheet" href="lockcss/commen.css">
+    <!--引入字体图标库-->
+	<link rel="stylesheet" href="http://at.alicdn.com/t/font_715918_p933z6qfxr.css">
+    <style>
+    	.title{
+    		padding:5rem 0;
+    	}
+    	.title p{text-align: center;font-size:1.2rem;}
+    	.title .wait{font-size:1.1rem;}
+    	.shield{
+    		/*margin:auto;
+    		width:60%;
+    		height:18rem;*/
+    		/*background-image: url(../../img/shield.jpg);*/
+    		/*background-size: 100% 100%;*/
+    		display: flex;
+    		align-items: center;
+    		justify-content:center;
+    	}
+    	.box img{width:13rem;}
+    	.num{
+    		display: block;
+    		width:3rem;
+    		height:3rem;
+    		line-height:3rem;
+    		text-align: center;
+    		 border:1px solid #00BA9D;
+    		 border-radius: 50%;
+    		 margin:auto;color:#00BA9D;
+    		}
+    	#cancelOrder{
+    		position:absolute;
+    		bottom:4rem;
+    		right:0;
+    		left:0;
+    		width:85%;
+    		margin-top:2rem;
+    		background:none;color:#D8D8D8;
+    	}
+    </style>
+</head>
+<body>
+	<!-- 容器 -->
+	<div class="weui-tab">
+		<div class='title'>
+			<p>正在为您匹配附近锁匠</p>
+			<p class='wait'>请耐心等待...</p>
+		</div>
+		<div class='shield'>
+			<div class='box'>
+				<span id='num' class='num'>200</span>
+				<img src="lockimg/wait.gif" alt="">
+			</div>
+		</div>
+		<a href="javascript:;" class="weui-btn weui-btn_default" id='cancelOrder'>取消订单</a>
+	</div>
+	<!-- 引入jquery -->
+    <script src='lockjavascript/jquery.min.js'></script>
+	<!-- 引入jq-weui -->
+	<script src='lockjavascript/jquery-weui.min.js'></script>
+	<!-- 引入公共js -->
+	<script src='lockjavascript/commen.js'></script>
+	<script>
+        var number = 200;
+        var t = setInterval(function(){
+            if (number == 0) {
+                clearInterval(t);
+                $.alert('请联系客服人员！')
+                return;
+            }
+            document.getElementById("num").innerHTML = number;
+            number--;
+        }, 1000)
+		//截取url获取参数
+        function request(paras) {
+            var url = location.href;
+            var paraString = url.substring(url.indexOf("?") + 1, url.length).split("&");
+            var paraObj = { };
+            for (i = 0; j = paraString[i]; i++) {
+                paraObj[j.substring(0, j.indexOf("=")).toLowerCase()] = j.substring(j.indexOf("=") + 1, j.length);
+            }
+            var returnValue = paraObj[paras.toLowerCase()];
+            if (typeof (returnValue) == "undefined") {
+                return "";
+            } else {
+                return returnValue;
+            }
+        }
+        var data = {};
+        data.ordertype = decodeURI(request("ordertype"));
+		data.ubid = decodeURI(request("ubid"));
+       //加载页面状态判断
+        $.ajax({
+            type: 'post',
+            dataType: 'json',
+            data: data,
+            url: '/lockshield/Distance/unlock',
+            success: function (res) {
+                // console.log(res);
+                if(res.data == 1 && res.code ==1){
+                    clearInterval(time);
+                    window.location.href = '/lockshield/order/thelock?ubid='+data.ubid+'&orderlounk='+1;
+                }else if(res.code ==7){
+                    window.location.href = '/lockshield';
+                }
+            }
+        })
+		//轮询状态查询
+		function obtainMsg(){
+            $.ajax({
+                type: 'post',
+                dataType: 'json',
+                data: data,
+                url: '/lockshield/Distance/unlock',
+                success: function (res) {
+                    console.log(res);
+                    if(res.data == 1 && res.code ==1){
+                        clearInterval(time);
+                        window.location.href = '/lockshield/order/thelock?ubid='+data.ubid+'&orderlounk='+1;
+					}
+                }
+            })
+		}
+        var time = setInterval(function(){
+            obtainMsg();
+		},5000);
+
+        // var wsUri ="ws://hna.suodun.xin/lockshield/Distance/unlock";
+
+        // 取消订单
+		$('#cancelOrder').click(function(){
+            $.confirm("您确认要取消此订单吗?", function() {
+                //点击确认后的回调函数
+                $.ajax({
+                    type: 'post',
+                    dataType: 'json',
+                    data: {'ubid':data.ubid},
+                    url: '/lockshield/Order/cancelorder',
+                    success: function (data) {
+                        console.log(data);
+                        if(data.code == 1){
+                            $.alert('取消成功');
+                            window.location.href = '/lockshield/index/index';
+                        }
+                    }
+                })
+            }, function() {
+                //点击取消后的回调函数
+            });
+
+		});
+
+	</script>
+</body>
+</html>

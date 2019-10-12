@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>资料上报</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!-- 引入weui样式 -->
+    <link rel="stylesheet" href="lockcss/weui.css">
+    <!-- 引入jq-weui样式 -->
+    <link rel="stylesheet" href="lockcss/jquery-weui.min.css">
+    <!-- 引入全局样式 -->
+    <link rel="stylesheet" href="lockcss/commen.css">
+    <!--引入字体图标库-->
+    <link rel="stylesheet" href="http://at.alicdn.com/t/font_715918_zdtz9zi6ih.css">
+    <style>
+        /*.locksmith_list{}*/
+        .weui-input{font-size:0.9rem;}
+
+        .lock_information{color:#333;text-align: center;padding-top:1rem;}
+        .lock_information h3{font-weight: inherit;padding:0.5rem 0;margin-top:-1.5rem;}
+        .lock_information h3>span{background:#fff;padding:0 0.3rem;}
+        .lock_information>ul{width:85%;margin:0 auto;padding:0.5rem;overflow: hidden;}
+        .lock_information>ul>li{text-align: left;overflow: hidden;position:relative;}
+        .lock_information>ul>li>i{float:left;width:10%;}
+        .lock_information>ul>li>p{float:left;width:70%;padding:0;font-size:1rem;text-align: left;}
+        .lock_information>ul>li>p>.the_time{margin-left:1rem;}
+        .lock_information>ul>li>p>.time{color:red;margin-left:1rem;}
+        .lock_information>ul>li>a{position:absolute;top:-5px;right:5px;color:#00b79e;}
+        .lock_information>ul>li>a>.iconfont{font-size:1.8rem;}
+
+        .lock_information .appointment .text_logo{
+            display: inline-block;
+            width:1.7rem;
+            height:1.7rem;
+            background:#00b79e;
+            color:#fff;
+            border-radius: 50%;
+            text-align: center;
+            float:left;
+        }
+
+        .content .divider{width:94%;height:2rem;border-bottom: 1px solid #D8D8D8;margin:auto;}
+        .content h3{font-weight: inherit;padding:0.5rem 0;margin-top:-1.5rem;text-align: center;}
+        .content h3>span{background:#fff;padding:0 0.3rem;}
+        .locktype{width:100%;overflow: hidden;}
+        .locktype li{float:left;width:33%;text-align: center;}
+        .locktype li a{display: inline-block;padding:0rem 0.8rem;border-radius: 25px;border:1px solid #D8D8D8;color:#D8D8D8;}
+        .locktype li .active{border:1px solid #00B79E;color:#00B79E;}
+
+        .weui-cells{font-size:1rem;}
+        .weui-cell .weui-cell__hd span{color:red;margin-right:3px;}
+        .weui-cell .weui-cell__bd input{text-align: right;}
+        .weui-cell .upload{position:relative;}
+        .weui-cell .upload input{text-align: left;}
+        .weui-cell .upload div{position:absolute;top:0;right:0;}
+        .weui-uploader__input-box{margin:0;width:20px;height:20px;}
+        .weui-uploader__input-box:before{height:15px;}
+        .weui-uploader__input-box:after{width:15px;}
+        .weui-cells:after{border-bottom: none;}
+        .safeLock,.carLock{display: none;}
+        .weui-tab{
+            overflow-y:scroll ;
+            -webkit-overflow-scrolling: touch;
+        }
+    </style>
+    <style>
+        *{margin: 0;padding: 0;}
+        li{list-style-type: none;}
+        a,input{outline: none;-webkit-tap-highlight-color:rgba(0,0,0,0);}
+        #choose{display: none;}
+        canvas{width: 100%;border: 1px solid #000000;}
+        #upload{display: block;margin: 10px;height: 60px;text-align: center;line-height: 60px;border: 1px solid;border-radius: 5px;cursor: pointer;}
+        .touch{background-color: #ddd;}
+        .img-list{margin: 10px 5px;}
+        .img-list li{position: relative;display: inline-block;width: 100px;height: 100px;margin: 5px 5px 20px 5px;border: 1px solid rgb(100,149,198);background: #fff no-repeat center;background-size: cover;}
+        .progress{position: absolute;width: 100%;height: 20px;line-height: 20px;bottom: 0;left: 0;background-color:rgba(100,149,198,.5);}
+        .progress span{display: block;width: 0;height: 100%;background-color:rgb(100,149,198);text-align: center;color: #FFF;font-size: 13px;}
+        .size{position: absolute;width: 100%;height: 15px;line-height: 15px;bottom: -18px;text-align: center;font-size: 13px;color: #666;}
+        .tips{display: block;text-align:center;font-size: 13px;margin: 10px;color: #999;}
+        .pic-list{margin: 10px;line-height: 18px;font-size: 13px;}
+        .pic-list a{display: block;margin: 10px 0;}
+        .pic-list a img{vertical-align: middle;max-width: 30px;max-height: 30px;margin: -4px 0 0 10px;}
+    </style>
+</head>
+<body>
+<!--预览图片-->
+<div id="previewImg">
+    <img src="" alt="">
+</div>
+<!-- 容器 -->
+<div class="weui-tab">
+    <!-- 开锁信息 -->
+    <div class='lock_information' style="display: none;">
+        <ul>
+            <li>
+                <i class='iconfont icon-xiazai19'></i>
+                <p>
+                    <span>{$orderlist.address}</span>
+                </p>
+                <a href="tel:{$orderlist.mobilephone}">
+                    <i class='iconfont icon-dadianhua'></i>
+                </a>
+            </li>
+            <li>
+                <i class='iconfont icon-time'></i>
+                <p>
+                    <!--<span>2018-05-21</span><span class='the_time'>18:45:58</span>-->
+                    <span>{$orderlist.addtime}</span>
+                </p>
+            </li>
+            <li>
+                <i class='iconfont icon-yaochi01'></i>
+                <p>
+                        <span>
+                             <switch name="orderlist.ordertype">
+                               <case value="1">开锁</case>
+                               <case value="2">换锁</case>
+                               <case value="3">预约</case>
+                               <case value="4">代客下单</case>
+                             </switch>
+                        </span>
+                </p>
+                <a>
+                    <i class='iconfont icon-techreport-'></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class='content'>
+        <div class='divider'></div>
+        <h3>
+            <span>资料上传</span>
+        </h3>
+        <ul class='locktype'>
+            <li><a href="javascript:" class='door active' onclick='lock(door)'>门锁</a></li>
+            <li><a href="javascript:" class='safe'  onclick='lock(safe)'>保险柜</a></li>
+            <li><a href="javascript:" class='car'  onclick='lock(car)'>汽车锁</a></li>
+        </ul>
+        <div class="weui-cells weui-cells_form">
+            <!--<div class="weui-cell"  >-->
+                <!--<div class="weui-cell__hd">-->
+                    <!--<label class="weui-label"><span>*</span>客户姓名</label>-->
+                <!--</div>-->
+                <!--<div class="weui-cell__bd">-->
+                    <!--<input class="weui-input name" type="text">-->
+                <!--</div>-->
+            <!--</div>-->
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <label class="weui-label"><span>*</span>客户电话</label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input mobilephone">
+                </div>
+            </div>
+            <div class="weui-cell" style="display: none;">
+                <div class="weui-cell__hd"><label class="weui-label"><span>*</span>证件类型</label></div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input cardtype" id="idcard_property" type="text" value="身份证"  placeholder="请选择证件类型" />
+                </div>
+            </div>
+            <!--<div class="weui-cell" style="display: none;">-->
+                <!--<div class="weui-cell__hd">-->
+                    <!--<label class="weui-label"><span>*</span>证件号码</label>-->
+                <!--</div>-->
+                <!--<div class="weui-cell__bd">-->
+                    <!--<input class="weui-input IdNumber">-->
+                <!--</div>-->
+            <!--</div>-->
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <label class="weui-label"><span>*</span>开锁地址</label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input yy_adress" type="text" id='city-picker' placeholder="开锁地址" />
+                </div>
+            </div>
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <label class="weui-label"><span>*</span>详细地址</label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input xx_adress" type="text" id='citypickerDetai' placeholder="详细地址" />
+                </div>
+            </div>
+            <div class="weui-cell" id="handIDPhoto">
+                <div class="weui-cell__hd">
+                    <label class="weui-label"><span>*</span>证件照片</label>
+                </div>
+                <div class="weui-cell__bd upload">
+                    <input class="weui-input" type="text" placeholder="保证照片清晰,证件号可识别">
+                    <div class="weui-uploader__input-box">
+                        <!--<input  class="weui-uploader__input" type="file" accept="image/*"  capture="camera" />-->
+                        <input  class="weui-uploader__input" type="file" accept="image/*"  />
+                    </div>
+                </div>
+            </div>
+
+            <div class="weui-cell"  >
+                <div class="weui-cell__hd">
+                    <label class="weui-label"><span>*</span>客户姓名</label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input name" type="text">
+                </div>
+            </div>
+
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <label class="weui-label"><span>*</span>证件号码</label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input IdNumber">
+                </div>
+            </div>
+
+
+            <div class="weui-cell" id="lockphoto">
+                <div class="weui-cell__hd">
+                    <label class="weui-label"><span>*</span>开锁过程图片</label>
+                </div>
+                <div class="weui-cell__bd upload">
+                    <input class="weui-input" type="text" placeholder="开锁前、后各一张">
+                    <div class="weui-uploader__input-box">
+                        <input  class="weui-uploader__input" type="file" accept="image/*"   />
+                    </div>
+                </div>
+            </div>
+            <div class="weui-cell">
+                <div class="weui-cell__hd"><label class="weui-label thepublic">业务类型:</label></div>
+                <div class="weui-cell__bd">
+                    <!--<input class="weui-input" id="customer_property" type="text" value="<switch name="orderlist.ordertype">-->
+                    <!--<case value="1">开锁</case>-->
+                    <!--<case value="2">换锁</case>-->
+                    <!--<case value="3">开锁</case>-->
+                    <!--<case value="4">开锁</case>-->
+                    <!--</switch>">-->
+                </div>
+            </div>
+            <div style='width:100%;height:1px;border-top:1px solid #e5e5e5;color:#e5e5e5;margin-left: 15px;-webkit-transform:scaleY(0.5);'></div>
+            <div>
+                <div class='doorLock'>
+
+                </div>
+                <div class='safeLock'>
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd"><label class="weui-label thepublic">级别:</label></div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-input" id="customer_jibie" type="text" value="" placeholder="保险柜级别">
+                        </div>
+                    </div>
+                    <div class="weui-cell" id="workingphoto">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">
+                                <!--<span>*</span>-->
+                                单位证明照片</label>
+                        </div>
+                        <div class="weui-cell__bd upload">
+                            <input class="weui-input" type="text" placeholder="保证照片清晰">
+                            <div class="weui-uploader__input-box">
+                                <input class="weui-uploader__input" type="file" accept="image/*" />
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+                <div class='carLock'>
+                    <div class="weui-cell" id="carphoto">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">
+                                <!--<span>*</span>-->
+                                行驶证照片</label>
+                        </div>
+                        <div class="weui-cell__bd upload">
+                            <input class="weui-input" type="text" placeholder="保证照片清晰">
+                            <div class="weui-uploader__input-box">
+                                <input class="weui-uploader__input" type="file" accept="image/*" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">开换锁费用</label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input price" id='unlock' type="number" pattern="[0-9]*" placeholder="0.00元">
+                </div>
+            </div>
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">
+                        <!--<span>*</span>-->
+                        里程费用</label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input price" id='changlock' type="number" pattern="[0-9]*" value='' placeholder="0.00元">
+                </div>
+            </div>
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">夜间服务费</label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input price" id='service' type="number" pattern="[0-9]*" placeholder="0.00元">
+                </div>
+            </div>
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">合计</label>
+                </div>
+                <div class="weui-cell__bd" id='combined' style='text-align: right'>
+                    0.00元
+                </div>
+            </div>
+        </div>
+        <a href="javascript:;" class="weui-btn weui-btn_orange" id='completeLock' style='width:85%;margin-top:2rem;margin-bottom:2rem;'>资料上传</a>
+    </div>
+    <img src="lockimg/shuiyin.png" id="lamp" style="display: none;"/>
+</div>
+<!-- 引入jquery -->
+<script src='lockjavascript/jquery.min.js'></script>
+<!-- 引入jq-weui -->
+<script src='lockjavascript/jquery-weui.min.js'></script>
+<!-- 引入swiper -->
+<script src='lockjavascript/swiper.min.js'></script>
+<!-- 引入公共js -->
+<script src='lockjavascript/commen.js'></script>
+<!-- 引入地址选择组件 -->
+<script type="text/javascript" src="lockjavascript/city-picker.min.js" charset="utf-8"></script>
+<!-- 引入微信公众平台js -->
+<script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<!--地点转坐标-->
+<script type="text/javascript" src="http://webapi.amap.com/maps?v=1.4.1&key=165bef343361053f2c0442fcb833dcc2&plugin=AMap.Geocoder"></script>
+<script type="text/javascript" src="http://cache.amap.com/lbs/static/addToolbar.js"></script>
+<!--引入压缩图片-->
+<script src='lockjavascript/lrz.bundle.js'></script>
+
+<script>
+    $("#customer_property").select({
+        title: "选择业务类型",
+        items: ["开锁", "换锁"],
+        onChange: function(d) {
+            console.log(d);
+        }
+    });
+    $("#idcard_property").select({
+        title: "选择证件类型",
+        items: ["身份证","组织机构代码证书","境外人员身份证明","外交人员身份证件","居民户口薄","暂住证","驾驶证","港澳台证件","军官证","士兵证","其他证件"],
+        onChange: function(d) {
+            console.log(d);
+        }
+    });
+    $("#customer_jibie").select({
+        title: "选择保险柜级别",
+        items: ["民用级", "银行级"],
+        onChange: function(d) {
+            console.log(d);
+        }
+    });
+    $("#city-picker").cityPicker({
+        title: "请选择地址"
+    });
+    //地址变化
+    $("#city-picker").change(function() {
+    });
+    $(".IdNumber").click(function () {
+        if( $("#idcard_property").val() == ''){
+            $.alert('请先选择证件类型!');
+            return
+        }
+    })
+    var imgUrl = 'http://hnwechat.suodun.xin/Uploads/orderphoto/'; //图片固定地址
+    // 切换锁类型
+    var door = document.getElementsByClassName('door')[0];
+    var safe = document.getElementsByClassName('safe')[0];
+    var car = document.getElementsByClassName('car')[0];
+    var lockkind = 1;
+    function lock(dom){
+        //清空数据
+        $('.weui-cell__bd input').val('');
+        $(".upload img").remove();
+        $('#combined').html('0.00元');
+        lockkind = null;
+        $('.upload .weui-input').css('display','block');
+        $('.del_logo').remove();
+        handIDPhotoflag = 0;
+        lockphotoflag = 0;
+        carphotoflag = 0;
+        workingphotoflag = 0;
+
+        $(dom).addClass("active");
+        $(dom).parent().siblings().children('a').removeClass("active");
+        if(dom.className == 'door active'){
+            lockkind = 1;
+            $(".doorLock").css('display','block');
+            $(".doorLock").siblings().css('display','none');
+            getAddress();
+        }else if(dom.className == 'safe active'){
+            lockkind = 2;
+            $(".safeLock").css('display','block');
+            $(".safeLock").siblings().css('display','none');
+            getAddress();
+        }else if(dom.className == 'car active'){
+            lockkind = 3;
+            $(".carLock").css('display','block');
+            $(".carLock").siblings().css('display','none');
+            getAddress();
+        }
+    }
+    getAddress();
+    //自动获取位置
+    var areacode = null;
+    function getAddress() {
+        wx.config({
+            debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+            appId: '{$signPackage.appId}', // 必填，公众号的唯一标识
+            timestamp: '{$signPackage.timestamp}', // 必填，生成签名的时间戳
+            nonceStr: '{$signPackage.nonceStr}', // 必填，生成签名的随机串
+            signature: '{$signPackage.signature}',// 必填，签名，见附录1
+            jsApiList: [
+                'getLocation'
+            ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+        });
+        wx.ready(function(){
+            // $.alert("触发获取地址")
+            wx.getLocation({
+                type: "wgs84",
+                success: function (res) {
+                    var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+                    var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+                    regeocoder(longitude, latitude);
+                },
+                fail:function(res){
+                    console.log(JSON.stringify(res))
+                }
+            });
+        });
+        wx.error(function(res){
+            alert(JSON.stringify(res)+"wx.error");
+        });
+        // 逆地理编码
+        function regeocoder(longitude, latitude) {
+            //标准坐标转化为高德地图
+            var str = [longitude, latitude]
+            AMap.convertFrom(str , 'gps', function(status, result) {
+                var strlnglatXY = result.locations.toString()//已知点坐标
+                lnglatXY =  strlnglatXY.split(',');
+                var geocoder = new AMap.Geocoder({
+                    radius: 1000,
+                    extensions: "all"
+                });
+                geocoder.getAddress(lnglatXY, function(status, result) {
+                    if (status === 'complete' && result.info === 'OK') {
+                        geocoder_CallBack(result);
+                        $('#city-picker').val(result.regeocode.addressComponent.province+' '+result.regeocode.addressComponent.city+' '+result.regeocode.addressComponent.district)
+                    }
+                });
+            })
+        }
+    }
+
+    function geocoder_CallBack(data) {
+        var str = data.regeocode.addressComponent.adcode;
+        areacode= str.substr(0, 2) + '0000,'+str.substr(0, 4) + '00,'+str;
+    }
+    // 地址转坐标
+    var lng,lat;
+    var map = new AMap.Map("container", {
+        resizeEnable: true
+    });
+    function geocoder(address) {
+        var geocoder = new AMap.Geocoder({
+            city: "035", //城市，默认：“全国”
+            radius: 1000 //范围，默认：500
+        });
+        //地理编码,返回地理编码结果
+        geocoder.getLocation(address, function(status, result) {
+            console.log(result)
+            if (status === 'complete' && result.info === 'OK') {
+                lng = geocoder_Call(result)[0];
+                lat = geocoder_Call(result)[1];
+            }
+        });
+    }
+    //地理编码返回结果展示
+    function geocoder_Call(data) {
+        var resultStr = "";
+        //地理编码结果数组
+        var geocode = data.geocodes;
+        for (var i = 0; i < geocode.length; i++) {
+            var arr = [];
+            arr.push(geocode[i].location.getLng(),geocode[i].location.getLat());
+            return  arr
+        }
+    }
+
+    // 开锁费用
+    $('.price').keyup(function(event) {
+        var unlock,changlock,service;
+        if(!$('#unlock').val()){
+            unlock = 0;
+        }else{
+            unlock = parseFloat($('#unlock').val());
+        }
+        if(!$('#changlock').val()){
+            changlock = 0;
+        }else{
+            changlock = parseFloat($('#changlock').val());
+        }
+        if(!$('#service').val()){
+            service = 0;
+        }else{
+            service = parseFloat($('#service').val());
+        }
+        var num = unlock + changlock + service;
+        $('#combined').html(num+'元');
+    });
+    // 获取地址的ubid
+    function request(paras) {
+        var url = location.href;
+        var paraString = url.substring(url.indexOf("?") + 1, url.length).split("&");
+        var paraObj = { };
+        for (i = 0; j = paraString[i]; i++) {
+            paraObj[j.substring(0, j.indexOf("=")).toLowerCase()] = j.substring(j.indexOf("=") + 1, j.length);
+        }
+        var returnValue = paraObj[paras.toLowerCase()];
+        if (typeof (returnValue) == "undefined") {
+            return "";
+        } else {
+            return returnValue;
+        }
+    }
+    var ubid = decodeURI(request("ubid"));
+    //建立一個可存取到該file的url
+    function getObjectURL(file) {
+        var url = null ;
+        if (window.createObjectURL != undefined) { // basic
+            url = window.createObjectURL(file) ;
+        }else if (window.URL != undefined) { // mozilla(firefox)
+            url = window.URL.createObjectURL(file) ;
+        }else if (window.webkitURL != undefined) { // webkit or chrome
+            url = window.webkitURL.createObjectURL(file) ;
+        }
+        return url ;
+    }
+    //base64转file
+    function convertBase64UrlToBlob(urlData){
+        var bytes=window.atob(urlData.split(',')[1]);        //去掉url的头，并转换为byte
+        //处理异常,将ascii码小于0的转换为大于0
+        var ab = new ArrayBuffer(bytes.length);
+        var ia = new Uint8Array(ab);
+        for (var i = 0; i < bytes.length; i++) {
+            ia[i] = bytes.charCodeAt(i);
+        }
+        return new Blob( [ab] , {type : 'image/png'});
+    }
+    //生成随机字符串
+    function randomString(len) {
+        len = len || 32;
+        var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';    /****默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1****/
+        var maxPos = $chars.length;
+        var pwd = '';
+        for (i = 0; i < len; i++) {
+            pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
+        }
+        return pwd;
+    }
+    var imgUrl = 'http://localhost:8080//file/preview?filename='; //图片固定地址
+    var fileUrl = 'http://localhost:8080/'
+    var handIDPhoto;
+    // 手持身份证照片
+    var handIDPhotoflag = 0;
+    $("#handIDPhoto input").on('change', function (e) {
+        if(handIDPhotoflag >=1){
+            $.alert('手持身份证最多只能上传一张图片！');
+            return
+        }
+        var rst_files = [];//图片存放容器
+        var src, url = window.URL || window.webkitURL || window.mozURL, files = e.target.files;
+        for(var i = 0, len = files.length; i < len; ++i){
+            var file = files[i];
+            //图片加水印
+            var img = new Image();
+            img.onload=function () {
+                if(this.complete){
+                    canvas = document.createElement('canvas');
+                    canvas.height = img.height;
+                    canvas.width = img.width;
+                    var ctx = canvas.getContext("2d");
+                    ctx.drawImage(img,0,0);
+                    var image=document.getElementById("lamp");
+                    var pat=ctx.createPattern(image,"repeat");
+                    ctx.rect(-10,0,canvas.width,canvas.height);
+                    ctx.rotate(320*Math.PI/180);
+                    ctx.fillStyle = pat;
+                    ctx.fill();
+                    var dataUrl = canvas.toDataURL('image/jpeg',0.4);//base64文件
+                    //把所有的base64编码的图片存储如一个json数组中。切记这边要用双引号，规范！！！
+                    rst_files.push({"rst_64":dataUrl});
+                    // ajax请求
+                    $.showLoading('上传中...');
+                     var param = JSON.stringify({
+                        'base64File':rst_files[1],
+                        'fileName':randomString(18)+'.jpg'
+                    });
+                    $.ajax({
+                        url: fileUrl +"/file/uploadBase64File",
+                        type: 'POST',
+                        data: param,
+                        contentType: 'application/json;charset=UTF-8',
+                        success:function (response) {
+                            $.hideLoading();
+                            handIDPhoto  = response.data;
+                        },
+                        error:function () {
+
+                        }
+                    });
+                 }
+            }
+            //压缩并且准备添加水印
+            lrz(file,{width:640,quality:0.5}).then(function (rst) {
+                var rst_url = convertBase64UrlToBlob(rst.base64);
+                if (url) {
+                    src = url.createObjectURL(rst_url);
+                } else {
+                    src = e.target.result;
+                }
+                img.src = src;
+            });
+            if (url) {
+                src_ori = url.createObjectURL(file);
+            } else {
+                src_ori = e.target.result;
+            }
+            //追加图片到预览区域
+            handIDPhotoflag++;
+            $('#handIDPhoto .weui-input').css('display','none');
+            $('#handIDPhoto .upload').append(
+                '<img src="'+src_ori+'" style="width:1.5rem;height:1.5rem;float:left;" onclick="preview(this)" alt="">'+
+                '<i class="iconfont icon-shanchu del_logo" style="color:red;font-size:1rem;float:left;margin-left:0.2rem;margin-right:2rem;" onclick="delimg(this,1)"></i>'
+            );
+        }
+    });
+    // 开锁过程照片
+    var lockphotoflag = 0; var lockphoto = [];
+    $("#lockphoto input").on('change', function (e) {
+        if(lockphotoflag >=2){
+            $.alert('开锁过程最多只能上传两张图片！');
+            return
+        }
+        var rst_files = [];//图片存放容器
+        var src, url = window.URL || window.webkitURL || window.mozURL, files = e.target.files;
+        for(var i = 0, len = files.length; i < len; ++i){
+            var file = files[i];
+            //图片加水印
+            var img = new Image();
+            img.onload=function () {
+                if(this.complete){
+                    canvas = document.createElement('canvas');
+                    canvas.height = img.height;
+                    canvas.width = img.width;
+                    var ctx = canvas.getContext("2d");
+                    ctx.drawImage(img,0,0);
+                    var image=document.getElementById("lamp");
+                    var pat=ctx.createPattern(image,"repeat");
+                    ctx.rect(-10,0,canvas.width,canvas.height);
+                    ctx.rotate(320*Math.PI/180);
+                    ctx.fillStyle = pat;
+                    ctx.fill();
+                    var dataUrl = canvas.toDataURL('image/jpeg',0.4);//base64文件
+                    //把所有的base64编码的图片存储如一个json数组中。切记这边要用双引号，规范！！！
+                    rst_files.push({"rst_64":dataUrl});
+                    // ajax请求
+                    $.showLoading('上传中...');
+                    var param = JSON.stringify({
+                        'base64File':rst_files[1],
+                        'fileName':randomString(18)+'.jpg'
+                    });
+                    $.ajax({
+                        url: fileUrl +"/file/uploadBase64File",
+                        type: 'POST',
+                        data: param,
+                        contentType: 'application/json;charset=UTF-8',
+                        success:function (response) {
+                            $.hideLoading();
+                            lockphoto.push(response.data)
+                        },
+                        error:function () {
+
+                        }
+                    });
+                }
+            }
+            //压缩并且准备添加水印
+            lrz(file,{width:640,quality:0.5}).then(function (rst) {
+
+                var rst_url = convertBase64UrlToBlob(rst.base64);
+                if (url) {
+                    src = url.createObjectURL(rst_url);
+                } else {
+                    src = e.target.result;
+                }
+                img.src = src;
+            });
+            if (url) {
+                src_ori = url.createObjectURL(file);
+            } else {
+                src_ori = e.target.result;
+            }
+            //追加图片到预览区域
+            lockphotoflag++;
+            // console.log('++',lockphotoflag);
+            $('#lockphoto .weui-input').css('display','none');
+            $('#lockphoto .upload').append(
+                '<img src="'+src_ori+'" style="width:1.5rem;height:1.5rem;float:left;" onclick="preview(this)" alt="">'+
+                '<i class="iconfont icon-shanchu del_logo" style="color:red;font-size:1rem;float:left;margin-left:0.2rem;margin-right:2rem;" onclick="delimg(this,2)"></i>'
+            );
+        }
+    });
+    // 单位证明照片
+    var workingphotoflag = 0; var workingphoto = '';
+    $("#workingphoto input").on('change', function (e) {
+        if(workingphotoflag >=1){
+            $.alert('单位证明最多只能上传一张图片！');
+            return
+        }
+        var rst_files = [];//图片存放容器
+        var src, url = window.URL || window.webkitURL || window.mozURL, files = e.target.files;
+        for(var i = 0, len = files.length; i < len; ++i){
+            var file = files[i];
+            //图片加水印
+            var img = new Image();
+            img.onload=function () {
+                if(this.complete){
+                    canvas = document.createElement('canvas');
+                    canvas.height = img.height;
+                    canvas.width = img.width;
+                    var ctx = canvas.getContext("2d");
+                    ctx.drawImage(img,0,0);
+                    var image=document.getElementById("lamp");
+                    var pat=ctx.createPattern(image,"repeat");
+                    ctx.rect(-10,0,canvas.width,canvas.height);
+                    ctx.rotate(320*Math.PI/180);
+                    ctx.fillStyle = pat;
+                    ctx.fill();
+                    var dataUrl = canvas.toDataURL('image/jpeg',0.4);//base64文件
+                    //把所有的base64编码的图片存储如一个json数组中。切记这边要用双引号，规范！！！
+                    rst_files.push({"rst_64":dataUrl});
+                    // ajax请求
+                    $.showLoading('上传中...');
+                    var param = JSON.stringify({
+                        'base64File':rst_files[1],
+                        'fileName':randomString(18)+'.jpg'
+                    });
+                    $.ajax({
+                        url: fileUrl +"/file/uploadBase64File",
+                        type: 'POST',
+                        data: param,
+                        contentType: 'application/json;charset=UTF-8',
+                        success:function (response) {
+                            $.hideLoading();
+                            workingphoto = response.data;
+                            // $('#handIDPhoto .upload img').last().attr('src',imgUrl + response.data);
+                        },
+                        error:function () {
+
+                        }
+                    });
+
+                }
+            }
+
+            //压缩并且准备添加水印
+            lrz(file,{width:640,quality:0.5}).then(function (rst) {
+
+                var rst_url = convertBase64UrlToBlob(rst.base64);
+                if (url) {
+                    src = url.createObjectURL(rst_url);
+                } else {
+                    src = e.target.result;
+                }
+                img.src = src;
+            });
+            if (url) {
+                src_ori = url.createObjectURL(file);
+            } else {
+                src_ori = e.target.result;
+            }
+            //追加图片到预览区域
+            workingphotoflag++;
+            $('#workingphoto .weui-input').css('display','none');
+            $('#workingphoto .upload').append(
+                '<img src="'+src_ori+'" style="width:1.5rem;height:1.5rem;float:left;" onclick="preview(this)" alt="">'+
+                '<i class="iconfont icon-shanchu del_logo" style="color:red;font-size:1rem;float:left;margin-left:0.2rem;margin-right:2rem;" onclick="delimg(this,1)"></i>'
+            );
+        }
+    });
+
+    // 行驶证照片
+    var carphotoflag = 0; var carphoto = '';
+    $("#carphoto input").on('change', function (e) {
+        if(carphotoflag >=1){
+            $.alert('行驶证照片最多只能上传一张图片！');
+            return
+        }
+        var rst_files = [];//图片存放容器
+        var src, url = window.URL || window.webkitURL || window.mozURL, files = e.target.files;
+        for(var i = 0, len = files.length; i < len; ++i){
+            var file = files[i];
+            //图片加水印
+            var img = new Image();
+            img.onload=function () {
+                if(this.complete){
+                    canvas = document.createElement('canvas');
+                    canvas.height = img.height;
+                    canvas.width = img.width;
+                    var ctx = canvas.getContext("2d");
+                    ctx.drawImage(img,0,0);
+                    var image=document.getElementById("lamp");
+                    var pat=ctx.createPattern(image,"repeat");
+                    ctx.rect(-10,0,canvas.width,canvas.height);
+                    ctx.rotate(320*Math.PI/180);
+                    ctx.fillStyle = pat;
+                    ctx.fill();
+                    var dataUrl = canvas.toDataURL('image/jpeg',0.4);//base64文件
+                    //把所有的base64编码的图片存储如一个json数组中。切记这边要用双引号，规范！！！
+                    rst_files.push({"rst_64":dataUrl});
+                    // ajax请求
+                    $.showLoading('上传中...');
+                    var param = JSON.stringify({
+                        'base64File':rst_files[1],
+                        'fileName':randomString(18)+'.jpg'
+                    });
+                    $.ajax({
+                        url: fileUrl +"/file/uploadBase64File",
+                        type: 'POST',
+                        data: param,
+                        contentType: 'application/json;charset=UTF-8',
+                        success:function (response) {
+                            $.hideLoading();
+                            carphoto = response.data
+
+                        },
+                        error:function () {
+
+                        }
+                    });
+
+                }
+            }
+
+            //压缩并且准备添加水印
+            lrz(file,{width:640,quality:0.5}).then(function (rst) {
+
+                var rst_url = convertBase64UrlToBlob(rst.base64);
+                if (url) {
+                    src = url.createObjectURL(rst_url);
+                } else {
+                    src = e.target.result;
+                }
+                img.src = src;
+            });
+            if (url) {
+                src_ori = url.createObjectURL(file);
+            } else {
+                src_ori = e.target.result;
+            }
+            //追加图片到预览区域
+            carphotoflag++;
+            $('#carphoto .weui-input').css('display','none');
+            $('#carphoto .upload').append(
+                '<img src="'+src_ori+'" style="width:1.5rem;height:1.5rem;float:left;" onclick="preview(this)" alt="">'+
+                '<i class="iconfont icon-shanchu del_logo" style="color:red;font-size:1rem;float:left;margin-left:0.2rem;margin-right:2rem;" onclick="delimg(this,3)"></i>'
+            );
+        }
+    });
+    // 删除图片
+    function delimg(dom,num){
+        if(num == 1){
+            handIDPhotoflag--;
+        }else if(num == 2){
+            lockphotoflag--;
+        }else if(num ==3){
+            carphotoflag--;
+        }
+        $.confirm("您确认要删除这张图片吗?", function() {
+            //点击确认后的回调函数
+            if($(dom).siblings('img').length == 1){
+                $(dom).siblings('.weui-input').css('display','block');
+            }
+            $(dom).prev().remove();
+            $(dom).remove();
+            $.toast("图片已经删除!");
+        }, function() {
+            //点击取消后的回调函数
+        });
+    }
+
+    // 地址转坐标
+    var lng,lat;
+    var map = new AMap.Map("container", {
+        resizeEnable: true
+    });
+    //设置一个对象来控制是否进入AJAX过程
+    var post_flag = false;
+    //完成开锁
+    $('#completeLock').click(function(){
+        var data = {};
+        data.handIDPhoto = handIDPhoto;
+        var lockphotos = ''
+        for(var i = 0;i<lockphoto.length;i++){
+             lockphotos += lockphoto[i]+'+'
+        }
+        data.lockphoto=lockphotos.substring(0,lockphotos.length-1)
+        if(!$('.mobilephone').val()){
+            $.alert('客户电话不能为空!');
+            return
+        }
+        if(!$('.yy_adress').val()){
+            $.alert('开锁地址不能为空!');
+            return
+        }
+        if(!$('.name').val()){
+            $.alert('客户姓名不能为空!');
+            return
+        }
+        var reg = new RegExp("[\u4E00-\u9FA5]");
+        if(!reg.test($('.name').val())){
+            $.alert('客户姓名请输入中文!');
+            return
+        }
+        if(!$('.IdNumber').val()){
+            $.alert('身份证号不能为空!');
+            return
+        }
+        if(!handIDPhoto){
+            $.alert('手持身份证照片不能为空!');
+            return
+        }
+        if(!lockphoto){
+            $.alert('开锁过程照片不能为空!');
+            return
+        }
+        if(lockphoto.length<2){
+            $.alert('开锁过程照片不能少于两张!');
+            return
+        }
+
+
+        data.ubid = 0000;
+        data.lockkind = lockkind;
+        data.name = $('.name').val();
+        data.cardtype = $('#idcard_property').val();
+        data.idcard = $('.IdNumber').val();
+        data.mobilephone = $('.mobilephone').val();
+        data.address = $('.yy_adress').val() + $('.xx_adress').val();
+
+        if($('.xx_adress').val()){
+            data.address = $('.yy_adress').val() + $('.xx_adress').val();
+        }else{
+            $.alert('详细地址不能为空');
+            return;
+        }
+        //获取地址行政区域编码
+        //获取地址行政区域编码
+        if($('#city-picker').attr('data-codes')){
+            areacode = $('#city-picker').attr('data-codes');
+            var area = areacode.split(',');
+            if(area[0]){
+                data.province = area[0];
+            }
+            if(area[1]){
+                data.city = area[1];
+            }
+            if(area[2]){
+                data.county = area[2];
+            }
+        }else{
+            var area = areacode.split(',');
+            data.province = area[0];
+            data.city = area[1];
+            data.county = area[2];
+        }
+        if($('#customer_property').val()== '开锁'){
+            data.businesstype = 1;
+        }else if($('#customer_property').val()== '换锁'){
+            data.businesstype =2;
+        }
+        if(lockkind == 1 ){
+            data.brand = $('.lockbrand').val();
+            data.locktype = $('.doorlocktype').val();
+            data.lockcore = $('.locklevel').val();
+        }else if(lockkind == 2){
+            if($('#customer_jibie').val()== '民用级'){
+                data.jibie = 1;
+            }else if($('#customer_jibie').val()== '银行级'){
+                data.jibie =2;
+            }
+            if(workingphotoflag == 0){
+                 var workingphoto = '';
+            }else{
+                 data.workingphoto = workingphoto
+              }
+            data.brand = $('.safebrand').val();
+            data.locktype = $('.safetype').val();
+            data.lockcore = $('.safecode').val();
+            data.workingphoto = workingphoto;
+        }else if(lockkind == 3){
+            if(carphotoflag == 0){
+                var carphoto = '';
+            }else{
+                data.carphoto = carphoto
+                console.log(carphoto)
+            }
+            data.carphoto = carphoto;
+            data.brand = $('.carbrand').val();
+            data.locktype = $('.carcolor').val();
+            data.lockcore = $('.carnum').val();
+        }
+
+        data.unlockmoney = $('#unlock').val();
+        data.changelockmoney = $('#changlock').val();
+        data.servemoney = $('#service').val();
+        data.money = $('#combined').html().replace(/[\u4e00-\u9fa5]/g, "");
+        console.log("data",data);
+        geocoder( $('.yy_adress').val() + $('.xx_adress').val());
+        //如果正在提交则直接返回，停止执行
+        if(post_flag) return;
+        //标记当前状态为正在提交状态
+        post_flag = true;
+        setTimeout(function(){
+            data.lat = lat;
+            data.lng = lng;
+            $.ajax({
+                type:'POST',
+                dataType:'json',
+                data:data,
+                url:"/locksmith/Index/orderUploading",
+                success:function(res){
+                    // $.post("/lockshield/z/ublockBookdata",{ubid:res.result},function(result){   if(res.code = 200){console.log('上报成功')} });    //市局上报数据                           //郑州市局上传数据
+                    if(res.code == 4){
+                        post_flag =false; //在提交成功之后将标志标记为可提交状态
+                        $.alert({
+                            title: '提示',
+                            text: '提交成功！',
+                            onOK: function () {
+                                //点击确认
+                                window.location.href = '/locksmith'
+                            }
+                        });
+                    }
+                }
+            })
+        },500);
+
+    });
+</script>
+</body>
+</html>

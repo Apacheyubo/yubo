@@ -1,0 +1,131 @@
+/* 
+  通用样式
+ */
+* {
+  margin: 0;
+  padding: 0;
+}
+html,body{
+  height: 100%;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+body,ul,ol,li,p,h1,h2,h3,h4,h5,h6,form,table,td,img,div {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+ul,ol,dl {
+  list-style: none;
+}
+select,input,img,select {
+  vertical-align: middle;
+}
+a{
+  text-decoration: none;
+}
+a:link {
+  /*color: #333;*/
+}
+
+a:hover,
+a:active,
+a:focus {
+  text-decoration: none;
+}
+
+html,
+body {
+  overflow-x: hidden;
+  background:#fff;
+  width: 100%;
+  height: 100%;
+  font-family: 'Microsoft YaHei','Avenir',Helvetica,Arial,sans-serif;
+  /*font-size: 200px;*/
+  color: #333;
+}
+/*媒体查询*/
+@media screen and (min-width:320px) and (max-width:374px) {
+  html,body {
+    font-size:12px;
+  }
+}
+@media screen and (min-width:375px) and (max-width:413px) {
+  html,body {
+    font-size:14px;
+  }
+}
+@media screen and (min-width:414px) and (max-width:420px) {
+  html,body {
+    font-size:14px!important;
+  }
+}
+/*媒体查询*/
+/*容器样式*/
+.weui-tab{overflow-y: auto;}
+/*橙色按钮样式*/
+.weui-btn_orange{
+  background: linear-gradient(#00d0b4, #00b79e);
+}
+/*左侧弹窗样式*/
+#dialog{
+  width:100%;
+  height:100%;
+  position:absolute;
+  -webkit-transition:left 0.5s;
+  -moz-transition:left 0.5s;
+  transition:left 0.5s;
+  left:-100%;
+  z-index:999;
+  overflow: auto;
+}
+#dialog .mask{
+  width:100%;
+  height:100%;
+  background:#000;
+  opacity: 0.8;
+}
+#dialog .dialog_content{
+  width:75%;
+  height:100%;
+  background:#fff;
+  position:absolute;
+  top:0;
+  left:0;
+}
+#dialog .iconfont{font-size:2rem;color:#00b79e;}
+.dialog_content .top{text-align: center;border-bottom:1px solid #ecf0f4;padding:1rem;}
+.dialog_content .top i{display:block;width:4rem;height:4rem;border:1px solid #ccc;margin:0.5rem auto;border-radius: 50%;overflow:hidden;}
+.dialog_content .top i img{width:100%;height:auto;}
+.dialog_content .little_list{width:86%;margin:auto;}
+.dialog_content .little_list li{list-style:none;width:100%;display:flex;align-items: center;border-bottom:1px solid #ecf0f4;padding:0.5rem 0;position:relative;}
+.dialog_content .little_list li i{display:inline-block;}
+.dialog_content .little_list li i img{width:100%;height:auto;}
+.dialog_content .little_list li span{margin-left:1rem;font-size:1.2rem;}
+.dialog_content .little_list li .num{position:absolute;right:0;top:1rem;}
+.dialog_content .little_list li a{display:flex;align-items: center;color:#333;}
+
+/*轮播图样式*/
+/*.swiper-container{height:15.71rem;}*/
+.swiper-slide img{width:100%;height:auto;}
+/*短信验证码样式*/
+.code{position:absolute;top:0;right:5px;}
+.code input{padding:5px 8px;border:1px solid #00B79E;background:none;outline: none;border-radius: 12px;color:#00B79E}
+
+/*图片预览样式*/
+#previewImg{
+  width:100%;
+  height:100%;
+  justify-content:center;
+  align-items:center;
+  background:#222;
+  position:absolute;
+  top:0;
+  z-index:9;
+  border-top:1px solid #ccc;
+  display:none;
+}
+#previewImg img{
+  width:100%;
+  height:auto;
+}

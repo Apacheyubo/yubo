@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>订单详情</title>
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!-- 引入weui样式 -->
+    <link rel="stylesheet" href="lockcss/weui.css">
+    <!-- 引入jq-weui样式 -->
+    <link rel="stylesheet" href="lockcss/jquery-weui.min.css">
+    <!-- 引入全局样式 -->
+    <link rel="stylesheet" href="lockcss/commen.css">
+    <!--引入字体图标库-->
+	<link rel="stylesheet" href="http://at.alicdn.com/t/font_715918_v6xcoz8567.css">
+    <style>
+		/*.locksmith_list{}*/
+		
+
+        .lock_information{color:#333;text-align: center;padding-top:2rem;}
+        .lock_information .divider{width:94%;height:1rem;border-bottom: 1px solid #D8D8D8;margin:auto;}
+        .lock_information h3{font-weight: inherit;padding:1rem 0;margin-top:-2rem;}
+        .lock_information h3>span{background:#fff;padding:0 0.3rem;}
+        .lock_information>ul{width:85%;margin:0 auto;padding:0.5rem;overflow: hidden;}
+        .lock_information>ul>li{text-align: left;overflow: hidden;position:relative;}
+        .lock_information>ul>li>i{float:left;width:10%;}
+        .lock_information>ul>li>p{float:left;width:70%;padding:0;font-size:1rem;text-align: left;}
+        .lock_information>ul>li>p>.the_time{margin-left:1rem;}
+        .lock_information>ul>li>p>.time{color:red;margin-left:1rem;}
+        .lock_information>ul>li>a{position:absolute;top:-6px;right:5px;color:#00b79e;}
+        .lock_information>ul>li>a>.iconfont{font-size:1.8rem;}
+		
+		.lock_information_pay{color:#333;text-align: center;}
+		.lock_information_pay .divider{width:94%;height:3rem;border-bottom: 1px solid #D8D8D8;margin:auto;}
+		.lock_information_pay h3{font-weight: inherit;padding:0.5rem 0;margin-top:-1.5rem;font-size:1.15rem;}
+		.lock_information_pay h3>span{background:#fff;padding:0 0.3rem;color:#333;}
+		.lock_information_pay>ul{width:70%;margin:auto;}
+		.lock_information_pay>ul>li{text-align: left;padding:0.5rem 0;overflow: hidden;color:#333;}
+        .lock_information_pay>ul>li>div{width:50%;float:left;font-size:1rem;}
+        .lock_information_pay>ul>li>.value{text-align: right;}
+        .lock_information_pay .combined div{color:#00b79e;}
+    </style>
+</head>
+<body>
+	<!-- 容器 -->
+	<div class="weui-tab">
+        <!-- 开锁信息 -->
+        <div class='lock_information'>
+        	<div class='divider'></div>
+        	<h3>
+        		<span>开锁信息</span>
+        	</h3>
+            <ul>
+                <li>
+                    <i class='iconfont icon-xiazai19'></i>
+                    <p>
+                        <span>{$orderdetial.address}</span>
+                    </p>
+                    <a href="tel:{$orderdetial.mobilephone}">
+                        <i class='iconfont icon-dadianhua'></i>
+                    </a>
+                </li>
+                <li>
+                    <i class='iconfont icon-time'></i>
+                    <p>
+                        <!--<span>2018-05-21</span><span class='the_time'>18:45:58</span>-->
+                        <span>{$orderdetial.addtime}</span>
+                    </p>
+                </li>
+                <li>
+                    <i class='iconfont icon-yaochi01'></i>
+                    <p>
+                        <span>
+                             <switch name="orderdetial.ordertype">
+                                   <case value="1">开锁</case>
+                                   <case value="2">换锁</case>
+                                    <case value="3">预约</case>
+                                    <case value="4">代客下单</case>
+                        </switch>
+                        </span>
+                    </p>
+                    <a>
+                        <i class='iconfont icon-jinggaocopy' style='color:red;'></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!-- 订单费用 -->
+        <div class='lock_information_pay'>
+        	<div class='divider'></div>
+        	<h3>
+        		<span>订单费用</span>
+        	</h3>
+        	<ul>
+        		<li class='lock'>
+        			<div class="name">
+                        开锁费用
+                    </div>
+        			<div class="value">
+                        <span>{$orderdetial.unlockmoney}</span>元
+                    </div>
+        		</li>
+        		<li class='Inthelock'>
+        			<div class="name">
+                        换锁费用
+                    </div>
+                    <div class="value">
+                        <span>{$orderdetial.changelockmoney}</span>元
+                    </div>
+        		</li>
+        		<li class='service'>
+        			<div class="name">
+                        夜间服务费
+                    </div>
+                    <div class="value">
+                        <span>{$orderdetial.servemoney}</span>元
+                    </div>
+        		</li>
+                <li class='combined'>
+                    <div class="name">
+                        合计
+                    </div>
+                    <div class="value">
+                        <span>{$orderdetial.money}</span>元
+                    </div>
+                </li>
+        	</ul>
+        </div>
+	</div>
+	<!-- 引入jquery -->
+    <!--<script src='../../js/jquery.min.js'></script>-->
+	<!--&lt;!&ndash; 引入jq-weui &ndash;&gt;-->
+	<!--<script src='../../js/jquery-weui.min.js'></script>-->
+	<!--&lt;!&ndash; 引入公共js &ndash;&gt;-->
+	<!--<script src='../../js/commen.js'></script>-->
+	<!--<script>-->
+        
+	<!--// </script>-->
+</body>
+</html>

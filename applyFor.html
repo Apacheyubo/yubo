@@ -1,0 +1,195 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="css/bootstrap.css?v=01291">
+    <link rel="stylesheet" href="css/style.css?v=1?v=01291">
+    <!-- 引入jquery -->
+    <script src='lockjavascript/jquery.min.js'></script>
+    <script charset="utf-8" src="javascript/bootstrap.min.js?v=01291"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="yes" name="apple-touch-fullscreen">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1;user-scalable=no;">
+
+    <title>我要提现</title>
+    <style type="text/css">
+        .applyFor{
+            max-width: 768px;
+            margin:0 auto;
+        }
+        /*box-shadow: 0 5px 10px rgba(0,0,0,0.3);*/
+        .applyFor_top{width:100%; height:75px; background-color: #67d0fd; box-shadow:0 2px 6px rgba(0,0,0,0.3);}
+        .applyFor_title button{width:24%; height:35px; border:none; background-color: #ea4354; border-radius:4px; color:#fff;f}
+        .applyFor_title button:nth-child(1){margin: 13px 18px 0 5%;}
+        .applyFor_title button:nth-child(2){margin:13px 5% 0 0;}
+        .applyFor_brand{width:90%; border-left:solid 10px #3e84b8; height:40px; line-height:40px; text-indent: 10px; margin:0 auto;
+            border-radius: 4px; background-color:#fff;color:#333;position: relative; top: 15px;}
+        .applyFor_bottom{width:95%; background-color: #ecf0f3; margin:0 auto; color:#333; height:50px; ;line-height: 50px;text-align:center;
+            border-radius: 4px; margin-top:15px;}
+        /*.applyFor_body{width: 95%; height:500px; border:solid 1px #333; margin:0 auto;}*/
+        .applyFor_body{margin-top: 15px;}
+        .applyFor_body_tit{width: 95%; height:50px; line-height:45px; border: solid #ddd 2px; margin:0 auto; border-left: 8px #3387c5 solid; text-indent:10px;}
+        .applyFor_body_cen{width: 95%; border:solid 1px #ddd; margin:0 auto; }
+        .applyFor_body_center{width: 95%;line-height:1.5;background-color: #ddd; margin:0 auto; margin-top: 5px; color:#333; padding:5px;}
+
+    </style>
+
+</head>
+<body style="background-color:#fff;">
+<header class="header">
+    <!--<div class="fix_nav">-->
+        <!--<div style="max-width:768px;margin:0 auto;background:#000000;position: relative;">-->
+            <!--&lt;!&ndash;<a class="nav-left back-icon" href="javascript:history.back();">返回</a>&ndash;&gt;-->
+            <!--<a class="nav-left back-icon" href="javascript:history.back();">返回</a>-->
+            <!--<div class="tit"></div>-->
+            <!--&lt;!&ndash;<div  style="font-size:18px;"></div>&ndash;&gt;-->
+        <!--</div>-->
+    <!--</div>-->
+</header>
+<div class="applyFor">
+    <div class="applyFor_top">
+        <div class="applyFor_brand" >
+            <a id="yue"></a>
+            <a id="jifen" style="margin-left: 10%"></a>
+        </div>
+
+    </div>
+    <div class="applyFor_title">
+        <!-- <button style="float:left;">支付宝提现</button> -->
+        <input type="text" id="ti"  style="width: 60%;height: 30px;margin: 16px 0px 0px 22px;border-radius: 4px;" value="" onkeyup="value=value.replace(/[^\d.]/g,'')" placeholder="请输入提现金额"/>
+        <!-- <input type="text" onpaste="return false" id="ti" style="width: 60%;height: 30px;margin: 16px 0px 0px 22px;border-radius: 4px;" value="" onpropertychange="if(isNaN(value)) value=value.substring(0,value.length-1);" placeholder="请输入提现金额"/> -->
+        <button  class="xian" style="float:right;"  >微信提现</button>
+    </div>
+    <div style="clear:both;"></div>
+    <div class="applyFor_bottom">提示：七个工作日内到账，周末节假日不提现</div>
+    <div class="applyFor_body">
+        <div class="applyFor_body_tit">提现记录</div>
+        <div class="applyFor_body_cen" style="padding-bottom:7px;" id="show">
+            <!-- <div class="applyFor_body_center">
+              <div>支付宝提现200.00元，以申请成功，请验收。支付宝提现200.00元，以申请成功，请验收。</div>
+              <div style="float:right; color:#b3b3b3; font-size:14px;">2016.12.12 14.22</div>
+              <div style="clear:both;"></div>
+            </div> -->
+
+            <!-- <div style="width:95%; height:10px;"></div> -->
+        </div>
+
+
+
+    </div>
+</div>
+
+<!--<script charset="utf-8" src="javascript/applyfor.js">-->
+
+<!--</script>-->
+
+</body>
+</html>
+<script>
+    $(".xian").click(function(){
+        var num = $('#ti').val();
+        if(num<10){
+            floatNotify.simple('提现金额不能小于10');
+           return false;
+        }
+        tixian();
+    })
+
+    var yue;
+    $.ajax({
+        url: "/locksmith/tradingmoney/tixianshow",
+        type: 'post',
+        async: false, //默认为true 异步
+        dataType: 'json',
+        error: function (err) {
+        },
+        success: function (msg) {
+            if (msg.code == 1) {
+                yue = parseFloat(msg.data[0]['shopmoney']);
+                var y = '余额<a style="color:red;"> ￥' + msg.data[0]['balance']  +'</a>';
+                $('#yue').append(y)
+                // var y1 = '积分:<a style="color:red; margin-left: 1%">' + msg.data[0]['integral']+ '</a>';
+                // $("#jifen").append(y1)
+                for (var i = 0; i < msg.data[1].length; i++) {
+                    if (msg.data[1][i].paytime) {
+                        var obj = '<div class=\"applyFor_body_center\">' +
+                            '<div>您通过微信提现' + msg.data[1][i].money + '元，已被管理员受理，请注意查收。</div>' +
+                            '<div style="float:right; color:#b3b3b3; font-size:12px;">' + msg.data[1][i].paytime + '</div>' +
+                            '<div style="clear:both;"></div>' +
+                            '</div>';
+                        $('#show').append(obj);
+                    }
+                    if (msg.data[1][i].operation == '返钱') {
+                        var obj = '<div class=\"applyFor_body_center\">' +
+                            '<div>您的开换锁赚取费用为' + msg.data[1][i].money + '元。</div>' +
+                            '<div style="float:right; color:#b3b3b3; font-size:12px;">' + msg.data[1][i].starttime + '</div>' +
+                            '<div style="clear:both;"></div>' +
+                            '</div>';
+                        $('#show').append(obj);
+                    }
+                    var obj = '<div class=\"applyFor_body_center\">' +
+                        '<div>微信提现' + msg.data[1][i].money + '元，已申请成功。</div>' +
+                        '<div style="float:right; color:#b3b3b3; font-size:12px;">' + msg.data[1][i].starttime + '</div>' +
+                        '<div style="clear:both;"></div>' +
+                        '</div>';
+                    $('#show').append(obj);
+
+                }
+            } else {
+                var obj = '<div class=\"applyFor_body_center\">' +
+                    '<div>暂无记录。</div>' +
+                    '<div style="clear:both;"></div>' +
+                    '</div>';
+                $('#show').append(obj);
+            }
+        }
+    });
+    function tixian() {
+        var money = $('#ti').val();
+        if (money) {
+            money = parseFloat(money);
+            if (money >= 1) {
+                // if (money <= yue) {
+                $.ajax({
+                    url: "/locksmith/tradingmoney/tixian",
+                    type: 'post',
+                    data: {'money': money},
+                    async: false, //默认为true 异步
+                    dataType: 'json',
+                    error: function (err) {
+                    },
+                    success: function (msg) {
+                        if (msg.code == 1) {
+
+                            floatNotify.simple("提交成功!");
+                            setTimeout(function () {  //使用  setTimeout（）方法设定定时2000毫秒
+                                window.location.reload();//页面刷新
+                            }, 2000);
+                        }
+                    }
+
+                });
+                // } else {
+                //     floatNotify.simple('余额不足!');
+                // }
+            } else {
+                floatNotify.simple("有效金额最小为1元!");
+            }
+
+        } else {
+            floatNotify.simple("请输入提现金额!");
+        }
+    }
+
+
+
+
+
+
+
+</script>

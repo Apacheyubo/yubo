@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>锁盾</title>
+</head>
+
+<body>
+
+</body>
+
+</html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>订单详情</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!-- 引入weui样式 -->
+    <link rel="stylesheet" href="lockcss/weui.css">
+    <!-- 引入jq-weui样式 -->
+    <link rel="stylesheet" href="lockcss/jquery-weui.min.css">
+    <!-- 引入全局样式 -->
+    <link rel="stylesheet" href="lockcss/commen.css">
+    <!--引入字体图标库-->
+    <link rel="stylesheet" href="http://at.alicdn.com/t/font_715918_fwz60jgm44j.css">
+    <style>
+        .locksmith_list {
+            padding: 1rem;
+            border-bottom: 1px solid #D8D8D8;
+        }
+
+        .locksmith_list>ul {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .locksmith_list>ul>li {
+            width: 33%;
+            margin-left: 1rem;
+        }
+
+        .locksmith_list>ul>.portrait {
+            border: 1px solid #D8D8D8;
+            border-radius: 50%;
+            overflow: hidden;
+            width: 3rem;
+            height: 3rem;
+            margin-right: 1rem;
+        }
+
+        .locksmith_list>ul>.portrait>img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .locksmith_list>ul>li>h3 {
+            display: inline-block;
+            font-weight: inherit;
+        }
+
+        .locksmith_list>ul>li>p>span {
+            color: #D8D8D8;
+            font-size:1.15rem;
+        }
+
+        .lock_information {
+            color: #333;
+            text-align: center;
+            display: none;
+        }
+
+        .lock_information h3 {
+            font-weight: inherit;
+            padding: 0.5rem 0;
+            margin-top: -1.5rem;
+        }
+
+        .lock_information h3>span {
+            background: #fff;
+            padding: 0 0.3rem;
+        }
+
+        .lock_information>ul {
+            width: 85%;
+            margin: 2rem auto;
+            padding: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0px 1px 10px 0px #D8D8D8;
+        }
+
+        .lock_information>ul>li {
+            text-align: left;
+            overflow: hidden;
+            position: relative;
+            padding:0.2rem 0;
+        }
+
+        .lock_information>ul>li>i {
+            float: left;
+            width: 10%;
+        }
+
+        .lock_information>ul>li>p {
+            float: left;
+            width: 70%;
+            padding: 0;
+            font-size: 1rem;
+            text-align: left;
+        }
+
+        .lock_information>ul>li>p>.the_time {
+            margin-left: 1rem;
+        }
+
+        .lock_information>ul>li>p>.time {
+            color: red;
+            margin-left: 1rem;
+        }
+
+        .lock_information>ul>li>a {
+            position: absolute;
+            top: -5px;
+            right: 5px;
+            color: #00b79e;
+        }
+
+        .lock_information>ul>li>a>.iconfont {
+            font-size: 1.5rem;
+        }
+
+        .lock_information .appointment .text_logo {
+            display: inline-block;
+            width: 1.7rem;
+            height: 1.7rem;
+            background: #00b79e;
+            color: #fff;
+            border-radius: 50%;
+            text-align: center;
+            float: left;
+        }
+
+        .content>.bg {
+            width: 58%;
+            height: 18rem;
+            margin: auto;
+            background: url(lockimg/shield.png);
+            background-size: 100% 100%;
+            margin-top: 3rem;
+        }
+
+        .content>.state {
+            position: absolute;
+            bottom: 2rem;
+            left: 0;
+            right: 0;
+        }
+
+        #refresh {
+            display: block;
+            width: 4rem;
+            height: 4rem;
+            line-height: 4rem;
+            text-align: center;
+            border: 1px solid #D8D8D8;
+            border-radius: 50%;
+            margin: 3rem auto 0;
+            color: #D8D8D8;
+        }
+
+        .switch ul {
+            overflow: hidden;
+            width: 70%;
+            margin: auto;
+        }
+
+        .switch ul li {
+            float: left;
+            font-size: 1rem;
+            line-height:1;
+            height: 3rem;
+            color: #D8D8D8;
+        }
+
+        .switch ul li i {
+            font-size: 2rem;
+        }
+
+        .switch ul .left,
+        .switch ul .right {
+            width: 15%;
+            text-align: center;
+        }
+
+        .switch ul .left {
+            color: #00b79e;
+        }
+
+        .switch ul .center {
+            width: 69%;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .switch ul .center .orbital {
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, #00B89E, #fff);
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .switch ul .center .orbital #slider {
+            display: inline-block;
+            width: 5px;
+            height: 5px;
+            background: #00B89E;
+            border-radius: 50%;
+            border: 1px solid #00B89E;
+            position: absolute;
+            top: -2px;
+            left: 0;
+        }
+
+        .arrive {
+            display: none;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+<!-- 遮罩层 -->
+<div id="dialog">
+    <div class="mask">
+    </div>
+    <div class="dialog_content">
+        <div class="top">
+            <i>
+                <img src="http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTKHz17OjBzVIbJJG0jCAMHXM6Ehm4uzf6Q9EkHvRxNa08icrkkALM7pDOs3VPfmFu5Odq2z1yLYqiaw/132" alt="">
+            </i>
+            <p>
+                我的昵称
+            </p>
+        </div>
+        <ul class="little_list">
+
+            <li onclick="lockclick('全部订单')">
+                <i class="iconfont icon-quanbudingdan"></i>
+                <span>全部订单</span>
+                <!--<span class="num">{$ordercount}</span>-->
+            </li>
+
+            <li onclick="lockclick('微信提现')">
+                <i class="iconfont icon-qianbao"></i>
+                <span>微信提现</span>
+                <!--<span class="num">{$balance}</span>-->
+            </li>
+            <li onclick="lockclick('资料上报')">
+                <i class="iconfont icon-qianbao"></i>
+                <span>资料上报</span>
+                <!--<span class="num">{$balance}</span>-->
+            </li>
+             <li>
+                <a href="tel:96116">
+                    <i class="iconfont icon-kefu"></i>
+                    <span>联系客服</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+<!-- 容器 -->
+<div class="weui-tab">
+    <div class="locksmith_list box" data-lid="_id">
+        <ul>
+            <li class="portrait"  id='user'>
+                <img src="http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTKHz17OjBzVIbJJG0jCAMHXM6Ehm4uzf6Q9EkHvRxNa08icrkkALM7pDOs3VPfmFu5Odq2z1yLYqiaw/132" alt="">
+            </li>
+            <li>
+                <h3>我的昵称</h3>
+            </li>
+            <li>
+
+                <!--<p>
+                    <span>接单:</span>
+                </p>-->
+            </li>
+        </ul>
+    </div>
+    <div class='content' style="overflow: auto;">
+        <!-- 开锁信息 -->
+        <div class='lock_information'>
+            <!--<volist name="orderlist" id="vo">-->
+                <ul class='appointment' data-orderlistubid="{$vo.ubid}" data-orderstatus = "{$vo.status}">
+                    <li>
+                        <i class='iconfont icon-xiazai19'></i>
+                        <p>
+                            <span>{$vo.address}</span>
+                        </p>
+                        <a href="tel:{$vo.mobilephone}">
+                            <i class='iconfont icon-dadianhua'></i>
+                        </a>
+                    </li>
+                    <li>
+                        <!--<i class='iconfont icon-time'></i>-->
+                        <switch name="vo.ordertype">
+                            <case value="1">
+                                <i class='iconfont icon-time'></i>
+                            </case>
+                            <case value="2">
+                                <i class='iconfont icon-time'></i>
+                            </case>
+                            <case value="3">
+                                <span class='text_logo'>预</span>
+                                <p style='padding-left:0.5rem;color:#00b79e;'>
+                            </case>
+                        </switch>
+                        <p>
+                            <span class='the_time'>{$vo.addtime}</span>
+                        </p>
+                        <!--<a href="javascript:void(0)" onclick='cancel("{$vo.ubid}")'>-->
+                        <!--<i class='iconfont icon-shanchu'></i>-->
+                        <!--</a>-->
+                    </li>
+                    <li>
+                        <i class='iconfont icon-yaochi01'></i>
+                        <p>
+                            <span>
+                                <switch name="vo.ordertype">
+                                   <case value="1">开锁</case>
+                                   <case value="2">换锁</case>
+                                    <case value="3">预约</case>
+                                    <case value="4">代客下单</case>
+                                 </switch>
+                            </span>
+                        </p>
+                        <a>
+                            <i class='iconfont icon-techreport-'></i>
+                        </a>
+                    </li>
+                </ul>
+            <!--</volist>-->
+        </div>
+        <div class="bg"></div>
+        <div class='state'>
+            <a href="javascript:0" class='refresh' id="refresh">刷新</a>
+            <div class='switch'>
+                <ul>
+                    <li class='left'>
+                        <i class='iconfont icon-xiuxi'></i>
+                        <p>休息</p>
+                    </li>
+                    <li class='center'>
+                        <div class='orbital'>
+                            <span id='slider'></span>
+                        </div>
+                    </li>
+                    <li class='right'>
+                        <i class='iconfont icon-gongren'></i>
+                        <p>接单</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="arrive">
+            <!--<p style='font-size:2rem;color:red;text-align: center;'>05:32</p>-->
+            <a href="javascript:;" class="weui-btn weui-btn_orange locksmitharrive" style='width:85%;margin-top:2rem;margin-bottom:2rem;'>到达目的地</a>
+        </div>
+    </div>
+</div>
+<!-- 引入jquery -->
+<script src='lockjavascript/jquery.min.js'></script>
+<!-- 引入jq-weui -->
+<script src='lockjavascript/jquery-weui.min.js'></script>
+<!-- 引入公共js -->
+<script src='lockjavascript/commen.js'></script>
+<script>
+    var orderststus = 1;   // 1   休息     2   接单     3.正在接单中      锁匠
+    // var ubid = $('.appointment').attr('data-orderlistubid');
+    // var orderstatus  = {$orderlist[0].status};
+    // alert(orderstatus);
+    // alert(orderststus);
+    if(orderststus == 1){
+        $('#slider').css('left', '0');
+        $('.switch ul .right').css('color', '#D8D8D8');
+        $('.switch ul .left').css('color', '#00b79e');
+        $('.switch ul .center .orbital').css('background', 'linear-gradient(to  right, #00B89E , #fff)');
+        $('#refresh').css({
+            'color': '#D8D8D8',
+            'border': '1px solid #D8D8D8',
+            'pointer-events': 'none'
+        });
+        $('.locksmith_list>ul>li>p>span').css('color', '#D8D8D8');
+        $('.bg').css('display', 'block');
+        $('.lock_information').css('display', 'none');
+    }else if(orderststus == 2 || orderststus == 3){
+        $('#slider').css('left', $('.orbital').width() - $('.orbital #slider').width() - 2);
+        $('.switch ul .left').css('color', '#D8D8D8');
+        $('.switch ul .right').css('color', '#00b79e');
+        $('.switch ul .center .orbital').css('background', 'linear-gradient(to  left, #00B89E , #fff)');
+        $('#refresh').css({
+            'color': '#00b79e',
+            'border': '1px solid #00b79e',
+            'pointer-events': 'auto'
+        });
+        $('.locksmith_list>ul>li>p>span').css('color', '#333');
+        $('.bg').css('display', 'none');
+        $('.lock_information').css('display','block');
+    }
+    $('#refresh').click(function(){
+        location = location;
+    });
+    // 切换闲忙状态
+    var slider = document.getElementById('slider');
+    var startX = 84;
+    var startY = 494;
+    var endX, endY;
+    slider.addEventListener('touchstart', function(e) {
+        var touch = event.targetTouches[0];
+        startX = touch.pageX;
+        startY = touch.pageY;
+    }, false);
+    slider.addEventListener('touchmove', function(e) {
+        var touch = event.targetTouches[0];
+        endX = touch.pageX;
+        endY = touch.pageY;
+        $('#slider').css('left', endX - startX);
+    });
+    slider.addEventListener('touchend', function(e) {
+        startX = endX;
+        startY = endY;
+        if(endX <= $('.orbital').width()) {
+            $('#slider').css('left', '0');
+            $('.switch ul .right').css('color', '#D8D8D8');
+            $('.switch ul .left').css('color', '#00b79e');
+            $('.switch ul .center .orbital').css('background', 'linear-gradient(to  right, #00B89E , #fff)');
+            $('#refresh').css({
+                'color': '#D8D8D8',
+                'border': '1px solid #D8D8D8',
+                'pointer-events': 'none'
+            });
+            $('.locksmith_list>ul>li>p>span').css('color', '#D8D8D8');
+            $('.bg').css('display', 'block');
+            $('.lock_information').css('display', 'none');
+            $.ajax({
+                type: 'post',
+                dataType: 'json',
+                data: {
+                    orderstatus: 2,
+                },
+                url: '/locksmith/Index/orderstatus',
+                success: function (res) {
+                    console.log(res);
+                },
+            })
+        } else if(endX > $('.orbital').width()){
+            $('#slider').css('left', $('.orbital').width() - $('.orbital #slider').width() - 2);
+            $('.switch ul .left').css('color', '#D8D8D8');
+            $('.switch ul .right').css('color', '#00b79e');
+            $('.switch ul .center .orbital').css('background', 'linear-gradient(to  left, #00B89E , #fff)');
+            $('#refresh').css({
+                'color': '#00b79e',
+                'border': '1px solid #00b79e',
+                'pointer-events': 'auto'
+            });
+            $('.locksmith_list>ul>li>p>span').css('color', '#333');
+            $('.bg').css('display', 'none');
+            $('.lock_information').css('display', 'block');
+            $.ajax({
+                type: 'post',
+                dataType: 'json',
+                data: {
+                    orderstatus: 1,
+                },
+                url: '/locksmith/Index/orderstatus',
+                success: function (res) {
+                    console.log(res);
+                },
+            })
+        }
+    });
+    $('.left').click(function() {
+        $('#slider').css('left', '0');
+        $('.switch ul .right').css('color', '#D8D8D8');
+        $('.switch ul .left').css('color', '#00b79e');
+        $('.switch ul .center .orbital').css('background', 'linear-gradient(to  right, #00B89E , #fff)');
+        $('#refresh').css({
+            'color': '#D8D8D8',
+            'border': '1px solid #D8D8D8',
+            'pointer-events': 'none'
+        });
+        $('.locksmith_list>ul>li>p>span').css('color', '#D8D8D8');
+        $('.bg').css('display', 'block');
+        $('.lock_information').css('display', 'none');
+        $.ajax({
+            type: 'post',
+            dataType: 'json',
+            data: {
+                orderstatus: 2,
+            },
+            url: '/locksmith/Index/orderstatus',
+            success: function (res) {
+                console.log(res);
+            },
+        })
+    });
+    $('.right').click(function() {
+        $('#slider').css('left', $('.orbital').width() - $('.orbital #slider').width() - 2);
+        $('.switch ul .left').css('color', '#D8D8D8');
+        $('.switch ul .right').css('color', '#00b79e');
+        $('.switch ul .center .orbital').css('background', 'linear-gradient(to  left, #00B89E , #fff)');
+        $('#refresh').css({
+            'color': '#00b79e',
+            'border': '1px solid #00b79e',
+            'pointer-events': 'auto'
+        });
+        $('.locksmith_list>ul>li>p>span').css('color', '#333');
+        $('.bg').css('display', 'none');
+        $('.lock_information').css('display', 'block');
+        $.ajax({
+            type: 'post',
+            dataType: 'json',
+            data: {
+                orderstatus: 1,
+            },
+            url: '/locksmith/Index/orderstatus',
+            success: function (res) {
+                console.log(res);
+            },
+        })
+    });
+
+    // 点击进入详情
+    $('.lock_information ul').click(function() {
+        if($('.appointment').attr('data-orderstatus') == 2){
+            var ubid = $(this).attr('data-orderlistubid');
+            window.location.href = '/locksmith/Index/datasubmitted?ubid='+ubid;
+        }else{
+            $(this).siblings('ul').css('display', 'none');
+            $(this).css('box-shadow', 'none');
+            $(this).find('.time').css('display', 'none');
+            $(this).find('a').css('display', 'none');
+            $('.bg').css({
+                'display': 'block',
+                'margin-top': '-2rem'
+            });
+            $('.state').css('display', 'none');
+            $('.arrive').css('display', 'block');
+        }
+    });
+
+    $('.locksmitharrive').click(function () {
+        var ubid = $('.appointment').attr('data-orderlistubid');
+        $.ajax({
+            type: 'post',
+            dataType: 'json',
+            data: {
+                ubid: ubid,
+            },
+            url: '/locksmith/Index/locksmitharrive',
+            success: function (msg) {
+                if(msg.code ==1){
+                    window.location.href = '/locksmith/Index/datasubmitted?ubid='+ubid;
+                }
+            },
+        })
+
+    })
+
+    //导航栏页面跳转
+    function lockclick(ms) {
+
+        if (ms == '待支付') {
+            window.location.href = "/locksmith/order/orderlist?order=1";
+        } else if (ms == '全部订单') {
+            window.location.href = "/locksmith/order/orderlist";
+        } else if (ms == '本月订单') {
+            window.location.href = "/locksmith/order/orderlist?order=2";
+        } else if (ms == '我的钱包') {
+            window.location.href = "/locksmith/tradingmoney/mywallet";
+        }else if (ms == '银行卡') {
+            window.location.href = "/locksmith/tradingmoney/mybank";
+        }else if (ms == '资料上报') {
+            window.location.href = "/locksmith/index/uploading";
+        }else if (ms == '广告举报') {
+            window.location.href = "/locksmith/policeLogin/report";
+        }else if (ms == '微信提现') {
+            window.location.href = "/locksmith/tradingmoney/applyFor";
+        }
+    }
+
+    // 取消订单
+    function cancel(ubid){
+        // 阻止冒泡事件
+        window.event? window.event.cancelBubble = true : e.stopPropagation();
+        console.log(ubid);
+        $.confirm("您确认要取消此订单吗?", function() {
+
+        },function(){
+
+        })
+    }
+</script>
+</body>
+
+</html>

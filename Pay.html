@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>待支付</title>
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!-- 引入weui样式 -->
+    <link rel="stylesheet" href="lockcss/weui.css">
+	<!-- 引入jq-weui样式 -->
+	<link rel="stylesheet" href="lockcss/jquery-weui.min.css">
+	<!-- 引入全局样式 -->
+    <link rel="stylesheet" href="lockcss/commen.css">
+    <!--引入字体图标库-->
+	<link rel="stylesheet" href="http://at.alicdn.com/t/font_715918_p933z6qfxr.css">
+    <style>
+    	.locksmith_list{padding:1rem 0.5rem 0.5rem;height:4rem;width:82%;margin:auto;margin-top:1rem;}
+		.locksmith_list>ul{display: flex;align-items: center;position:relative;}
+		.locksmith_list>ul>.portrait{border:1px solid #ccc;border-radius: 50%;overflow: hidden;width:3rem;height:3rem;margin-right:1rem;}
+		.locksmith_list>ul>.portrait>img{width:100%;height:100%;}
+		.locksmith_list>ul>li>h3{display: inline-block;font-weight: inherit;}
+
+		.lock_information{color:#333;text-align: center;}
+		.lock_information .divider{width:94%;height:1rem;border-bottom: 1px solid #D8D8D8;margin:auto;}
+		.lock_information h3{font-weight: inherit;padding:0.5rem 0;margin-top:-1.5rem;font-size:1.15rem;}
+		.lock_information h3>span{background:#fff;padding:0 0.3rem;}
+		.lock_information>ul{width:76%;margin:auto;}
+		.lock_information>ul>li{text-align: left;padding:0.5rem 0;overflow: hidden;}
+        .lock_information>ul>li>div{float:left;font-size:1.15rem;}
+        .lock_information>ul>li>.name{width:30%;}
+        .lock_information>ul>li>.value{width:70%;text-align: right;color:#D8D8D8;}
+        .lock_information>ul>li>.value>ul{float:right;}
+        .lock_information>ul>.combined>div{color:#00B79E;}
+        #payment{position:absolute;bottom:8rem;right:0;left:0;color:#fff;}
+        /*.pay{display: none;}*/
+        .evaluation{display: none;}
+        .evaluation>ul>li{text-align: left;padding:0.5rem 0;overflow: hidden;height:3rem;line-height: 3rem;}
+        .stars{
+            white-space: nowrap;
+            text-align: center;
+        }
+        .stars li{
+            display: inline-block;
+            color: #DBDBDB;
+            font-size: 26px;
+        }
+        .msg{width:80%;padding:1rem;font-size:1rem;margin-top:2rem;outline: none;}
+    </style>
+</head>
+<body>
+	<!-- 容器 -->
+	<div class="weui-tab">
+		<div class="locksmith_list box" data-lid="_id">
+            <ul>
+	            <li class="portrait">
+	            	<img src="__URL__/{$locksmith.locksmithphoto}" alt="">
+	            </li>
+	            <li>
+		            <h3>{$locksmith.name}</h3><span style="margin-left:5px;color:#FE6701;"><i class="iconfont icon-icon"></i><span>8.9</span></span>
+		            <span style="color:#D8D8D8;padding:0;display: block;">上岗证编号:{$locksmith.licensenumber}</span>
+	            </li>
+	            <li style="position:absolute;top:0px;right:5px;">
+					<a href="tel:{$locksmith.mobile}"><i class="iconfont icon-dadianhua" style="color:#00b79e;font-size:2.3rem;"></i></a>
+	            </li>
+            </ul>
+        </div>
+        <!-- 待付款 -->
+        <div class='lock_information pay'>
+        	<div class='divider'></div>
+        	<h3>
+        		<span>开锁费用</span>
+        	</h3>
+        	<ul>
+        		<li class='lock'>
+        			<div class="name">
+                        开锁费用
+                    </div>
+        			<div class="value">
+                        <span>{$orderlist.unlockmoney}</span>元
+                    </div>
+        		</li>
+        		<li class='Inthelock'>
+        			<div class="name">
+                        换锁费用
+                    </div>
+                    <div class="value">
+                        <span>{$orderlist.changelockmoney}</span>元
+                    </div>
+        		</li>
+        		<li class='service'>
+        			<div class="name">
+                        夜间服务费
+                    </div>
+                    <div class="value">
+                        <span>{$orderlist.servemoney}</span>元
+                    </div>
+        		</li>
+                <li class='combined'>
+                    <div class="name">
+                        合计
+                    </div>
+                    <div class="value">
+                        <span id="totalmoney">{$orderlist.money}</span>元
+                    </div>
+                </li>
+        	</ul>
+        	<a href="javascript:;" class="weui-btn weui-btn_orange" id='pay' style='width:85%;margin-top:2rem;color:#fff;'>立即支付</a>
+        </div>
+        <!-- 立即评价 -->
+        <div class='lock_information evaluation'>
+            <div class='divider'></div>
+            <h3>
+                <span>我要评价</span>
+            </h3>
+            <ul>
+                <li class='speed'>
+                    <div class="name">
+                        到场速度
+                    </div>
+                    <div class="value">
+                        <ul class="stars speed">
+                            <li>★</li>
+                            <li>★</li>
+                            <li>★</li>
+                            <li>★</li>
+                            <li>★</li>
+                        </ul> 
+                    </div>
+                </li>
+                <li class='service'>
+                    <div class="name">
+                        服务态度
+                    </div>
+                    <div class="value">
+                       <ul class="stars service">
+                            <li>★</li>
+                            <li>★</li>
+                            <li>★</li>
+                            <li>★</li>
+                            <li>★</li>
+                        </ul>
+                    </div>
+                </li>
+                <li class='skills'>
+                    <div class="name">
+                        锁匠技能
+                    </div>
+                    <div class="value">
+                        <ul class="stars skills">
+                            <li>★</li>
+                            <li>★</li>
+                            <li>★</li>
+                            <li>★</li>
+                            <li>★</li>
+                        </ul>
+                    </div>
+                </li>
+                <li class='standard'>
+                    <div class="name">
+                        收费标准
+                    </div>
+                    <div class="value">
+                        <ul class="stars standard">
+                            <li>★</li>
+                            <li>★</li>
+                            <li>★</li>
+                            <li>★</li>
+                            <li>★</li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+            <textarea class='msg' rows="5"  placeholder="很好，谢谢师傅!"></textarea>
+            <a href="javascript:;" class="weui-btn weui-btn_orange" id='evaluation' style='width:85%;margin-top:2rem;margin-bottom:2rem;color:#fff;'>立即评价</a>
+        </div>
+	</div>
+	<!-- 引入jquery -->
+    <script src='lockjavascript/jquery.min.js'></script>
+     <!-- 引入微信公众平台js -->
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+	<!-- 引入jq-weui -->
+	<script src='lockjavascript/jquery-weui.min.js'></script>
+	<!-- 引入公共js -->
+	<script src='lockjavascript/commen.js'></script>
+	<script>
+        // 合计
+        // $(document).ready(function(){
+        //     var num = parseInt($('.lock .value span').html()+$('.Inthelock .value span').html()+$('.service .value span').html()).toFixed(2);
+        //     $('.combined .value span').html(num)
+        // });
+
+        /**
+         * js获取url参数值
+         */
+        var status = {$orderlist.status};
+        // alert(status);
+        if(status == 4){
+            $('.pay').css('display','none');
+            $('.evaluation').css('display','block');
+            document.title = '我要评价';
+        }
+        function request(paras) {
+            var url = location.href;
+            var paraString = url.substring(url.indexOf("?") + 1, url.length).split("&");
+            var paraObj = { };
+            for (i = 0; j = paraString[i]; i++) {
+                paraObj[j.substring(0, j.indexOf("=")).toLowerCase()] = j.substring(j.indexOf("=") + 1, j.length);
+            }
+            var returnValue = paraObj[paras.toLowerCase()];
+            if (typeof (returnValue) == "undefined") {
+                return "";
+            } else {
+                return returnValue;
+            }
+        }
+        var ubid = decodeURI(request("ubid"));
+        // 五星评价
+        var stars;
+        var speedStar;
+        var serviceStar;
+        var skillsStar;
+        var standardStar;
+        //星星点击
+        $('.stars li').click(function() {
+            $(this).siblings().css('color', '#DBDBDB');
+            var index = $(this).index();
+            for(var i = 0; i <= index+1; i++) {
+                $(this).css('color', '#FF6600');
+                $(this).siblings('li:nth-child(' + i + ')').css('color', '#FF6600');
+            }
+            stars = index+1;
+            if($($(this).parent()[0]).hasClass('speed')){
+                speedStar = stars;
+            };
+            if($($(this).parent()[0]).hasClass('service')){
+                serviceStar = stars;
+            };
+            if($($(this).parent()[0]).hasClass('skills')){
+                skillsStar = stars;
+            };
+            if($($(this).parent()[0]).hasClass('standard')){
+                standardStar = stars;
+            };
+        });
+        // 立即评价
+        $('#evaluation').click(function(){
+            if(!speedStar){speedStar = 5}
+            if(!serviceStar){serviceStar = 5}
+            if(!skillsStar){skillsStar = 5}
+            if(!standardStar){standardStar = 5}
+            if($('.msg').val() == ''){
+                news = $(".msg").attr('placeholder')
+            }else{
+                news = $('.msg').val();
+            }
+            var data = {};
+            var num = speedStar+serviceStar+skillsStar+standardStar;
+            data.grade = (speedStar+serviceStar+skillsStar+standardStar)/2;
+            data.evaluate = news;
+            data.ubid =ubid;
+            console.log(data);
+            $.ajax({
+                type: 'post',
+                dataType: 'json',
+                data: data,
+                url: '/lockshield/order/evaluate',
+                success: function (data) {
+                    console.log(data);
+                    if(data.code == 1 ){
+                        // $.alert('评价成功!');
+                        window.location.href = '/lockshield';
+                    }
+                }
+            })
+        });
+
+        //微信支付
+
+
+        wx.config({
+            debug: false,
+            appId: '{$signPackage.appId}',
+            timestamp: '{$signPackage.timestamp}',
+            nonceStr: '{$signPackage.nonceStr}',
+            signature: '{$signPackage.signature}',
+            jsApiList: [
+                'chooseWXPay'
+            ]
+        });
+
+        wx.ready(function () {
+
+        });
+        wx.error(function(res){
+            // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
+            res.url = "{$signPackage.url}";
+// 				alert("errorMSG:" + JSON.stringify(res));
+        });
+        $('#pay').click(function () {
+            Pay()
+        })
+        function pay() {
+            var shopProDes = '<switch name="orderlist.ordertype"><case value="1">开锁</case><case value="2">换锁</case><case value="3">预约</case></switch>';
+            var price = parseFloat($('#totalmoney').text());
+            var obj = $(this);
+            var ordernumber = {$orderlist.ordernumber};
+            $.post("{:U('WxPay/index', '', '', true, 0)}", {
+                shopProDes: shopProDes,
+                price: price,
+                ubid:ubid,
+                ordernumber:ordernumber
+            }, function (wechatPays) {
+                wechatPays = JSON.parse(wechatPays);
+                console.log(wechatPays);
+                wechatPaysDo(wechatPays, obj);
+            });
+        }
+
+        // 微信支付
+        function wechatPaysDo(wechatPays, obj) {
+           wx.chooseWXPay({
+                timestamp: wechatPays.timeStamp,
+                nonceStr: wechatPays.nonceStr,
+                package: wechatPays.package,
+                signType: wechatPays.signType,
+                paySign: wechatPays.paySign,
+                success: function (res) {
+                   if (res.errMsg == "chooseWXPay:ok") {
+                        $.post("/lockshield/Order/wxpaysuccess",{ubid:ubid},function(result){  });
+                        $.post("/lockshield/z/data",{ubid:ubid},function(result){  });                           //综治传数据
+                        $('.pay').hide();
+                        $('.evaluation').show();
+                        $('.evaluation ul').css('width','90%');
+                        document.title = '我要评价';
+                    }
+                }
+            });
+        }
+	</script>
+</body>
+</html>

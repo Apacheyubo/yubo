@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>锁盾</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!-- 引入weui样式 -->
+    <link rel="stylesheet" href="lockcss/weui.css">
+    <!-- 引入jq-weui样式 -->
+    <link rel="stylesheet" href="lockcss/jquery-weui.min.css">
+    <!-- 引入全局样式 -->
+    <link rel="stylesheet" href="lockcss/commen.css">
+    <style>
+        .weui-tab {
+            overflow-y: auto;
+        }
+        .iconBtn {
+            width: 30px;
+            height: 1.7rem
+        }
+
+        .iconBtn img {
+            display: inline-block;
+            text-align: center;
+            line-height: 2rem;
+        }
+
+        .weui-cells:before {
+            border-top: none;
+        }
+
+        .weui-cells {
+            margin-top: 0rem;
+            margin-left: 1.8rem;
+            margin-right: 1.8rem;
+        }
+
+        .weui-input {
+            text-align: left;
+            text-indent: 1rem;
+            font-size: 0.875rem;
+        }
+     .divBox{
+             display: flex;
+             flex-wrap: wrap;
+             /*margin-top: 2rem;*/
+             /*justify-content: center;*/
+             padding-left: 2rem;
+             box-sizing: border-box;
+
+         }
+        .divBox>div {
+            width: calc(100% / 3.3);
+            height: 9rem ;
+            box-sizing: border-box;
+            display: table-cell;
+            vertical-align: middle;
+            text-align: center;
+            position:relative;
+            margin-top:1rem;
+            overflow: hidden;
+        }
+        .divBox div img{
+            width: 90%;
+            height: 7rem;
+        }
+        .divBox span{
+            display: block;
+            text-align: center;
+            margin-top: 6px;
+        }
+
+        .weui-btn_confirm{
+            font-size: 16px;
+            color: #ffffff;
+            width: 80%;
+            height: 2.75rem;
+            text-align: center;
+            margin: 1rem auto;
+            line-height: 2.75rem;
+            background: linear-gradient(#00d0b4, #00b79e); /* 标准的语法 */
+            border-radius: 3px;
+        }
+        .close_btn{
+            display: none;
+            width:20px;
+            height:20px;
+            z-index:8;
+            position:absolute;
+            top:0;
+            right:5px;
+            background-image: url("lockimg/close_btn.png");
+            background-size:100% 100%;
+        }
+        .divBox .close_btn img{
+            width:100%;
+            height:auto;
+        }
+        #tab1{
+            display:none;
+        }
+        .code{
+            top:0.5rem;
+        }
+        #previewImg{
+            width:100%;
+            height:100%;
+            justify-content:center;
+            align-items:center;
+            background:#000;
+            position:absolute;
+            top:0;
+            z-index:9;
+            border-top:1px solid #ccc;
+            display:none;
+        }
+        #previewImg img{
+            width:100%;
+            height:auto;
+        }
+        canvas{width: 100%;border: 1px solid #000000;}
+    </style>
+</head>
+
+<body>
+<!--预览图片-->
+<div id="previewImg">
+    <img src="" alt="">
+</div>
+<!-- 容器 -->
+<div class="weui-tab">
+    <div id="tab1" class="weui-tab__bd-item">
+        <!-- 轮播 -->
+        <div class="swiper-container">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                    <img src="lockimg/swiper-1.png"/>
+                </div>
+                <div class="swiper-slide">
+                    <img src="lockimg/swiper-2.png"/>
+                </div>
+                <div class="swiper-slide">
+                    <img src="lockimg/swiper-3.png"/>
+                </div>
+            </div>
+            <div class="swiper-pagination">
+            </div>
+        </div>
+        <!-- 短信验证-->
+        <div id="tabMsg">
+            <div class="weui-cells">
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <input class="weui-input mobile" name="phone_number" type="text" placeholder="请输入手机号"/>
+                    </div>
+                </div>
+            </div>
+            <div class="weui-cells">
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" name="verify_code" type="text" placeholder="请输入验证码"/>
+                    </div>
+                </div>
+                <div class="code">
+                    <input id="code" class="btn_type2" type="button" value="获取验证码" />
+                </div>
+            </div>
+
+            <a href="javascript:;" id="apply" class="weui-btn weui-btn_orange" style='width:80%;border-radius: 2px;margin-top:2rem;'>确认</a>
+        </div>
+    </div>
+    <div id="tab2" class="weui-tab__bd-item">
+        <div class="weui-cells">
+            <div class="weui-cell">
+                <div class="iconBtn">
+                    <img src="lockimg/people.png" alt="" width="auto" height="20rem">
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input name" type="text" placeholder="请输入你的姓名" onblur="regName(this.value)">
+                </div>
+            </div>
+        </div>
+        <div class="weui-cells">
+            <div class="weui-cell">
+                <div class="iconBtn">
+                    <img src="lockimg/company.png" alt="" width="auto" height="20rem">
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input company" type="text" placeholder="请输入你的所属公司">
+                </div>
+            </div>
+        </div>
+        <div class="weui-cells">
+            <div class="weui-cell">
+                <div class=" iconBtn">
+                    <img src="lockimg/idCard.png" alt="" width="auto" height="15rem">
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input idcard" type="text" placeholder="请输入您的身份证号码" onblur="isCardNo(this.value)">
+                </div>
+            </div>
+        </div>
+        <div class="weui-cells">
+            <div class="weui-cell">
+                <div class=" iconBtn">
+                    <img src="lockimg/number.png" alt=""width="auto" height="20rem">
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input licensenumber" type="text" placeholder="上岗证编号">
+                </div>
+            </div>
+        </div>
+        <div class="weui-cells">
+            <div class="weui-cell">
+                <div class=" iconBtn">
+                    <img src="lockimg/expiryTime.png" alt="" width="auto" height="20rem">
+                </div>
+                <div class="weui-cell__bd">
+                    <!--<input class="weui-input licenseendtime" type="text" placeholder="上岗证到期时间" id='datetime-picker'/>-->
+                    <input class="weui-input licenseendtime" id="date" type="text" placeholder="上岗证到期时间">
+                </div>
+            </div>
+        </div>
+        <div class="weui-cells">
+            <div class="weui-cell">
+                <div class=" iconBtn">
+                    <img src="lockimg/address.png" alt="" width="auto" height="20rem">
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input yy_adress" type="text" id='city-picker' placeholder="营业地址" />
+                </div>
+            </div>
+        </div>
+        <div class="weui-cells">
+            <div class="weui-cell">
+                <div class=" iconBtn">
+                    <img src="lockimg/address.png" alt=""   width="auto" height="20rem">
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input xx_adress" type="text" id='citypickerDetai' placeholder="详细地址" />
+                </div>
+            </div>
+        </div>
+
+        <!-- 图片上传 -->
+        <div class="divBox">
+              <div id="locksmithPhotoInput">
+                  <i class="close_btn"></i>
+                  <!--<img src="lockimg/locksmithPhoto.png" alt="" onclick="preview(this)">-->
+                  <div style="width:7rem;height:7rem;background:url('lockimg/locksmithPhoto.png') 0 0 no-repeat;background-size:100% 100%;"></div>
+                  <p></p>
+                  <input class="weui-uploader__input" type="file" accept="image/*">
+                  <span>锁匠照片</span>
+              </div>
+              <div id="idPhotoInput">
+                  <i class="close_btn"></i>
+                  <!--<img src="lockimg/idPhoto.png" alt="" onclick="preview(this)">-->
+                  <div style="width:7rem;height:7rem;background:url('lockimg/idPhoto.png') 0 0 no-repeat;background-size:100% 100%;"></div>
+                  <p></p>
+                  <input class="weui-uploader__input" type="file" accept="image/*">
+                  <span>身份证照片</span>
+              </div>
+              <div id="handIdPhotoInput">
+                  <i class="close_btn"></i>
+                  <!--<img src="lockimg/handIdPhoto.png" alt="" onclick="preview(this)">-->
+                  <div style="width:7rem;height:7rem;background:url('lockimg/handIdPhoto.png') 0 0 no-repeat;background-size:100% 100%;"></div>
+                  <p></p>
+                  <input class="weui-uploader__input" type="file" accept="image/*">
+                  <span>手持身份证</span>
+              </div>
+              <div id="postCardPhotoInput">
+                  <i class="close_btn"></i>
+                  <!--<img src="lockimg/postCardPhoto.png" alt="" onclick="preview(this)">-->
+                  <div style="width:7rem;height:7rem;background:url('lockimg/postCardPhoto.png') 0 0 no-repeat;background-size:100% 100%;"></div>
+                  <p></p>
+                  <input class="weui-uploader__input" type="file" accept="image/*">
+                  <span>上岗证照片</span>
+              </div>
+              <div id="licensePhotoInput">
+                  <i class="close_btn"></i>
+                  <!--<img src="lockimg/licensePhoto.png" alt="" onclick="preview(this)">-->
+                  <div style="width:7rem;height:7rem;background:url('lockimg/licensePhoto.png') 0 0 no-repeat;background-size:100% 100%;"></div>
+                  <p></p>
+                  <input class="weui-uploader__input" type="file" accept="image/*">
+                  <span>营业执照</span>
+              </div>
+        </div>
+
+        <div style="margin-top: 1rem">
+           <div id="confirmSubmit" class="weui-btn_confirm">提交资料</div>
+        </div>
+    </div>
+</div>
+
+<!-- 引入jquery -->
+<script src='lockjavascript/jquery.min.js'></script>
+<!-- 引入jq-weui -->
+<script src='lockjavascript/jquery-weui.min.js'></script>
+<!-- 引入swiper -->
+<script src='lockjavascript/swiper.min.js'></script>
+<!-- 引入公共js -->
+<script src='lockjavascript/commen.js'></script>
+<!-- 引入地址选择组件 -->
+<script type="text/javascript" src="lockjavascript/city-picker.min.js" charset="utf-8"></script>
+<!-- 引入微信公众平台js -->
+<script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<!--地点转坐标-->
+<script type="text/javascript" src="http://webapi.amap.com/maps?v=1.4.1&key=165bef343361053f2c0442fcb833dcc2&plugin=AMap.Geocoder"></script>
+<script type="text/javascript" src="http://cache.amap.com/lbs/static/addToolbar.js"></script>
+<!--引入压缩图片-->
+<script src='lockjavascript/lrz.bundle.js'></script>
+<script>
+    $('input,textarea').on('blur',function(){
+        window.scroll(0,0);
+    });
+    var siteTitle = '仅限本次上传使用,盗图必究！';
+    //验证身份证正则
+    function isCardNo(card){
+        if(!isIDcard(card)){
+            $.alert('身份证号格式不正确!');
+            return
+        }
+    }
+    //验证真实姓名正则
+    function regName(name) {
+        var regName =/^[\u4e00-\u9fa5]{2,4}$/;
+        if(!regName.test(name)){
+            $.alert('真实姓名填写有误');
+            return  false;
+        }
+    }
+    //日历
+    $("#date").calendar({
+        onChange: function (p, values, displayValues) {
+            console.log(values, displayValues);
+        }
+    });
+    // $("#datetime-picker").datetimePicker();  //选择时间控件
+    $("#city-picker").cityPicker({
+        title: "请选择地址"
+    });
+    var name; // 锁匠姓名
+    var address; // 锁匠营业地址
+    var mobile; // 锁匠电话
+    var idcard; // 身份证号码
+    var licensenumber;   // 身份证号码
+    var licenseendtime; // 上岗证到期时间
+    var lat; // 纬度坐标
+    var lng; // 经度坐标
+    var imgUrl = 'http://localhost:8080//file/preview?filename='; //图片固定地址
+    var fileUrl = 'http://localhost:8080/'
+    var locksmithphoto; // 锁匠照片路径
+    var idcardphoto; // 身份证照片路径
+    var handcardphoto; // 手持身份证照片路径
+    var workphoto; // 上岗证照片路径
+    var businessphoto; // 营业执照照片路径
+    // 允许上传的图片类型
+    var allowTypes = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif'];
+    // 1024KB，也就是 1MB
+    var maxSize = 2048 * 2048;
+    // 图片最大宽度
+    var maxWidth = 10000;
+    // 最大上传图片数量
+    var maxCount = 6;
+    var imgObj=[];
+    //base64转file
+    function convertBase64UrlToBlob(urlData){
+        var bytes=window.atob(urlData.split(',')[1]);        //去掉url的头，并转换为byte
+        //处理异常,将ascii码小于0的转换为大于0
+        var ab = new ArrayBuffer(bytes.length);
+        var ia = new Uint8Array(ab);
+        for (var i = 0; i < bytes.length; i++) {
+            ia[i] = bytes.charCodeAt(i);
+        }
+        return new Blob( [ab] , {type : 'image/png'});
+    }
+    //生成随机字符串
+    function randomString(len) {
+        len = len || 32;
+        var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';    /****默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1****/
+        var maxPos = $chars.length;
+        var pwd = '';
+        for (i = 0; i < len; i++) {
+            pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
+        }
+        return pwd;
+    }
+    // 上传锁匠照片
+    var locksmithphoto = ''
+    $("#locksmithPhotoInput input").on('change', function (e) {
+        var rst_files = [];//图片存放容器
+        var src, url = window.URL || window.webkitURL || window.mozURL, files = e.target.files;
+        var file = files[0];
+        if (url) {
+            src_ori = url.createObjectURL(file);
+        } else {
+            src_ori = e.target.result;
+        }
+        //追加图片到预览区域
+        $('#locksmithPhotoInput input').prev()[0].src = src_ori;
+        $('#locksmithPhotoInput .close_btn').css('display','block');
+        $("#locksmithPhotoInput input").css('display','none');
+        //压缩并且上传
+        $.showLoading('上传中...');
+        lrz(file,{width:640,quality:0.5}).then(function(rst){
+            rst_files.push({"rst_64":rst.base64});
+            var res_file = rst_files[0]['rst_64'].split(',');
+            var param = JSON.stringify({
+                'base64File':res_file[1],
+                'fileName':randomString(18)+'.jpg'
+            });
+
+            $.ajax({
+                url: fileUrl +"/file/uploadBase64File",
+                type: 'POST',
+                data: param,
+                contentType: 'application/json;charset=UTF-8',
+                success:function (response) {
+                    $.hideLoading();
+                    locksmithphoto = response.data;
+                    $("#locksmithPhotoInput div").css('display','none');
+                    $("#locksmithPhotoInput p").append(
+                        '<img src="'+imgUrl + response.data+'" alt="" onclick="preview(this)">'
+                    );
+                },
+                error:function () {
+
+                }
+            });
+        }).catch(function (err) {
+            // 处理失败会执行
+            console.log('压缩失败！')
+        });
+    });
+    // 身份证照片路径
+    var idcardphoto = '';
+    $("#idPhotoInput input").on('change', function (e) {
+        var rst_files = [];//图片存放容器
+        var src, url = window.URL || window.webkitURL || window.mozURL, files = e.target.files;
+        var file = files[0];
+        if (url) {
+            src_ori = url.createObjectURL(file);
+        } else {
+            src_ori = e.target.result;
+        }
+        //追加图片到预览区域
+        $('#idPhotoInput input').prev()[0].src = src_ori;
+        $('#idPhotoInput .close_btn').css('display','block');
+        $("#idPhotoInput input").css('display','none');
+        //压缩并且上传
+        $.showLoading('上传中...');
+        lrz(file,{width:640,quality:0.5}).then(function(rst){
+            rst_files.push({"rst_64":rst.base64});
+            var res_file = rst_files[0]['rst_64'].split(',');
+            var param = JSON.stringify({
+                'base64File':res_file[1],
+                'fileName':randomString(18)+'.jpg'
+            });
+            $.ajax({
+                url: fileUrl +"/file/uploadBase64File",
+                type: 'POST',
+                data: param,
+                contentType: 'application/json;charset=UTF-8',
+                success:function (response) {
+                    $.hideLoading();
+                    idcardphoto = response.data;
+                    $("#idPhotoInput div").css('display','none');
+                    $("#idPhotoInput p").append(
+                        '<img src="'+imgUrl + response.data+'" alt="" onclick="preview(this)">'
+                    );
+                },
+                error:function () {
+
+                }
+            });
+        }).catch(function (err) {
+            // 处理失败会执行
+            console.log('压缩失败！')
+        });
+    });
+    // 手持身份证照片路径
+    var handcardphoto = ''
+    $("#handIdPhotoInput input").on('change', function (e) {
+        var rst_files = [];//图片存放容器
+        var src, url = window.URL || window.webkitURL || window.mozURL, files = e.target.files;
+        var file = files[0];
+        if (url) {
+            src_ori = url.createObjectURL(file);
+        } else {
+            src_ori = e.target.result;
+        }
+        //追加图片到预览区域
+        $('#handIdPhotoInput input').prev()[0].src = src_ori;
+        $('#handIdPhotoInput .close_btn').css('display','block');
+        $("#handIdPhotoInput input").css('display','none');
+        //压缩并且上传
+        $.showLoading('上传中...');
+        lrz(file,{width:640,quality:0.5}).then(function(rst){
+            rst_files.push({"rst_64":rst.base64});
+            var res_file = rst_files[0]['rst_64'].split(',');
+            var param = JSON.stringify({
+                'base64File':res_file[1],
+                'fileName':randomString(18)+'.jpg'
+            });
+            $.ajax({
+                url:fileUrl +"/file/uploadBase64File",
+                type: 'POST',
+                data: param,
+                contentType: 'application/json;charset=UTF-8',
+                success:function (response) {
+                    $.hideLoading();
+                    handcardphoto = response.data;
+                    $("#handIdPhotoInput div").css('display','none');
+                    $("#handIdPhotoInput p").append(
+                        '<img src="'+imgUrl + response.data+'" alt="" onclick="preview(this)">'
+                    );
+                },
+                error:function () {
+
+                }
+            });
+        }).catch(function (err) {
+            // 处理失败会执行
+            console.log('压缩失败！')
+        });
+    });
+    // 上岗证照片路径
+    var workphoto = ''
+    $("#postCardPhotoInput input").on('change', function (e) {
+        var rst_files = [];//图片存放容器
+        var src, url = window.URL || window.webkitURL || window.mozURL, files = e.target.files;
+        var file = files[0];
+        if (url) {
+            src_ori = url.createObjectURL(file);
+        } else {
+            src_ori = e.target.result;
+        }
+        //追加图片到预览区域
+        $('#postCardPhotoInput input').prev()[0].src = src_ori;
+        $('#postCardPhotoInput .close_btn').css('display','block');
+        $("#postCardPhotoInput input").css('display','none');
+        //压缩并且上传
+        $.showLoading('上传中...');
+        lrz(file,{width:640,quality:0.5}).then(function(rst){
+            rst_files.push({"rst_64":rst.base64});
+            var res_file = rst_files[0]['rst_64'].split(',');
+            var param = JSON.stringify({
+                'base64File':res_file[1],
+                'fileName':randomString(18)+'.jpg'
+            });
+            $.ajax({
+                url: fileUrl +"/file/uploadBase64File",
+                type: 'POST',
+                data: param,
+                contentType: 'application/json;charset=UTF-8',
+                success:function (response) {
+                    $.hideLoading();
+                    var workphoto = response.data;
+                    $("#postCardPhotoInput div").css('display','none');
+                    $("#postCardPhotoInput p").append(
+                        '<img src="'+imgUrl + response.data+'" alt="" onclick="preview(this)">'
+                    );
+                },
+                error:function () {
+
+                }
+            });
+        }).catch(function (err) {
+            // 处理失败会执行
+            console.log('压缩失败！')
+        });
+    });
+    // 营业执照照片路径
+    var businessphoto = '';
+    $("#licensePhotoInput input").on('change', function (e) {
+        var rst_files = [];//图片存放容器
+        var src, url = window.URL || window.webkitURL || window.mozURL, files = e.target.files;
+        var file = files[0];
+        if (url) {
+            src_ori = url.createObjectURL(file);
+        } else {
+            src_ori = e.target.result;
+        }
+        //追加图片到预览区域
+        $('#licensePhotoInput input').prev()[0].src = src_ori;
+        $('#licensePhotoInput .close_btn').css('display','block');
+        $("#licensePhotoInput input").css('display','none');
+        //压缩并且上传
+        $.showLoading('上传中...');
+        lrz(file,{width:640,quality:0.5}).then(function(rst){
+            rst_files.push({"rst_64":rst.base64});
+            var res_file = rst_files[0]['rst_64'].split(',');
+            var param = JSON.stringify({
+                'base64File':res_file[1],
+                'fileName':randomString(18)+'.jpg'
+            });
+            $.ajax({
+                url: fileUrl +"/file/uploadBase64File",
+                type: 'POST',
+                data: param,
+                contentType: 'application/json;charset=UTF-8',
+                success:function (response) {
+                    $.hideLoading();
+                    businessphoto = response.data;
+                    $("#licensePhotoInput div").css('display','none');
+                    $("#licensePhotoInput p").append(
+                        '<img src="'+imgUrl + response.data+'" alt="" onclick="preview(this)">'
+                    );
+                },
+                error:function () {
+
+                }
+            });
+        }).catch(function (err) {
+            // 处理失败会执行
+            console.log('压缩失败！')
+        });
+    });
+
+    //照片删除
+    $('.close_btn').click(function(){
+        if($(this).parent().attr("id") == 'locksmithPhotoInput'){
+            // $(this).next()[0].src = '/Public/lockimg/locksmithPhoto.png';
+            $("#locksmithPhotoInput div").css('display','block');
+            $('#locksmithPhotoInput p img').remove();
+            $('#locksmithPhotoInput .close_btn').css('display','none');
+            $("#locksmithPhotoInput input").css('display','block');
+        }else if($(this).parent().attr("id") == 'idPhotoInput'){
+            // $(this).next()[0].src = '/Public/lockimg/idPhoto.png';
+            $("#idPhotoInput div").css('display','block');
+            $('#idPhotoInput p img').remove();
+            $('#idPhotoInput .close_btn').css('display','none');
+            $("#idPhotoInput input").css('display','block');
+        }else if($(this).parent().attr("id") == 'handIdPhotoInput'){
+            // $(this).next()[0].src = '/Public/lockimg/handIdPhoto.png';
+            $("#handIdPhotoInput div").css('display','block');
+            $('#handIdPhotoInput p img').remove();
+            $('#handIdPhotoInput .close_btn').css('display','none');
+            $("#handIdPhotoInput input").css('display','block');
+        }else if($(this).parent().attr("id") == 'postCardPhotoInput'){
+            // $(this).next()[0].src = '/Public/lockimg/postCardPhoto.png';
+            $("#postCardPhotoInput div").css('display','block');
+            $('#postCardPhotoInput p img').remove();
+            $('#postCardPhotoInput .close_btn').css('display','none');
+            $("#postCardPhotoInput input").css('display','block');
+        }else if($(this).parent().attr("id") == 'licensePhotoInput'){
+            // $(this).next()[0].src = '/Public/lockimg/licensePhoto.png';
+            $("#licensePhotoInput div").css('display','block');
+            $('#licensePhotoInput p img').remove();
+            $('#licensePhotoInput .close_btn').css('display','none');
+            $("#licensePhotoInput input").css('display','block');
+        }
+    });
+    //地址变化
+    $("#city-picker").change(function() {
+    });
+    //图片预览
+    function preview(imgObj){
+        console.log($(imgObj)[0].src)
+        $('#previewImg').css('display','flex');
+        $('#previewImg img')[0].src = $(imgObj)[0].src;
+    }
+    // 点击隐藏预览
+    $('#previewImg').click(function(){
+        $(this).css('display','none');
+    });
+    // 地址转坐标
+    var lng,lat;
+    var map = new AMap.Map("container", {
+        resizeEnable: true
+    });
+    function geocoder(address) {
+        var geocoder = new AMap.Geocoder({
+            city: "035", //城市，默认：“全国”
+            radius: 1000 //范围，默认：500
+        });
+        //地理编码,返回地理编码结果
+        geocoder.getLocation(address, function(status, result) {
+            if (status === 'complete' && result.info === 'OK') {
+                lng = geocoder_CallBack(result)[0];
+                lat = geocoder_CallBack(result)[1];
+            }
+        });
+    }
+    //地理编码返回结果展示
+    function geocoder_CallBack(data) {
+        var resultStr = "";
+        //地理编码结果数组
+        var geocode = data.geocodes;
+        for (var i = 0; i < geocode.length; i++) {
+            var arr = [];
+            arr.push(geocode[i].location.getLng(),geocode[i].location.getLat());
+            return  arr
+        }
+    }
+    var data={};
+    // 提交
+    $('#confirmSubmit').click(function(){
+        // 验证
+        if($('.name').val()){
+            data.name = $('.name').val();
+        }else{
+            $.alert('姓名不能为空');
+            return;
+        }
+        if($('.idcard').val()){
+            data.idcard = $('.idcard').val();
+        }else{
+            $.alert('身份证号码不能为空');
+            return;
+        }
+        if($('.licensenumber').val()){
+            data.licensenumber = $('.licensenumber').val();
+        }else{
+            $.alert('上岗证编号不能为空');
+            return;
+        }
+        if($('.licenseendtime').val()){
+            data.licenseendtime = $('.licenseendtime').val();
+            console.log(data.licenseendtime)
+        }else{
+            $.alert('上岗证到期时间不能为空');
+            return;
+        }
+        if($('#city-picker').attr('data-codes')){
+            var string = $('#city-picker').attr('data-codes');
+            var area = string.split(',');
+            if(area[0]){
+                data.province = area[0];
+            }
+            if(area[1]){
+                data.city = area[1];
+            }
+            if(area[2]){
+                data.county = area[2];
+            }
+        }else{
+            $.alert('营业地址不能为空');
+            return;
+        }
+        if($('.yy_adress').val()){
+            data.address = $('.yy_adress').val() + $('.xx_adress').val();
+        }else{
+            $.alert('营业地址不能为空');
+            return;
+        }
+        if($('.xx_adress').val()){}else{
+            $.alert('详细地址不能为空');
+            return;
+        }
+        if($('#locksmithPhotoInput p img').length == 1){
+            data.locksmithphoto = locksmithphoto;
+            console.log(data.locksmithphoto);
+        }else{
+            $.alert('请上传锁匠照片！');
+            return;
+        }
+        if($('#idPhotoInput p img').length == 1){
+            data.idcardphoto = idcardphoto;
+        }else{
+            $.alert('请上传身份证照片！');
+            return;
+        }
+        if($('#handIdPhotoInput p img').length == 1){
+            data.handcardphoto = handcardphoto;
+        }else{
+            $.alert('请上传手持身份证照片！');
+            return;
+        }
+        if($('#postCardPhotoInput p img').length == 1){
+            data.workphoto = workphoto;
+        }else{
+            $.alert('请上传上岗证证照片！');
+            return;
+        }
+        if($('#licensePhotoInput p img').length == 1){
+            data.businessphoto = businessphoto;
+        }else{
+            $.alert('请上传营业执照照片！');
+            return;
+        }
+        data.company = $('.company').val();
+        geocoder($('.yy_adress').val() + $('.xx_adress').val());
+        setTimeout(function(){
+            data.lat = lat;
+            data.lng = lng;
+        },500);
+        $('#tab1').css('display','block');
+        $('#tabMsg').css('display','block');
+        $('#tab2').css('display','none');
+        //轮播属性设置
+        $(".swiper-container").swiper({
+            loop: true,
+            autoplay: 3000
+        });
+    });
+    // 获取验证码
+    var code = $('#code');
+    var phoneNumber = $("input[name='phone_number']");
+    var verifyCode = $("input[name='verify_code']");
+    var apply = $('#apply');
+    var time;
+    var second;
+    var flag = 0;
+    var num = '';
+    function msg_time(){
+        clearInterval(time);
+        time = setInterval(function(){
+            if(second < 1){
+                code.val('获取验证码').css('background-color','none');
+                code.removeAttr('disabled');
+            }else{
+                var s = second--;
+                code.val(s+'s后重新获取');
+            }
+        },1000)
+    }
+    /*
+    发送短信验证码
+     */
+    code.on('click',function(){
+        var _this = $(this);
+        _this.attr('disabled','disabled');
+        var mobile = phoneNumber.val();
+        if(mobile.match(/^1[3|4|5|6|7|8|9]\d{9}$/)){
+            // $.ajax({
+            //     type:'POST',
+            //     dataType:'json',
+            //     data:{mobile:mobile},
+            //     url:"/lockshield/sms/code",
+            //     success:function(data){
+            //         // alert(data.result.Message);
+            //         if(data.result.Message=='OK'){
+            //             second = 60;
+            //             _this.val(second+'s后重新获取').css({'background':'#00B79E','color':'#fff'});
+            //             num = data['code'];
+            //             // alert(num);
+            //             msg_time();
+            //         }else{
+            //             _this.removeAttr('disabled');
+            //             if(data.msg){
+            //                 try{
+            //                     app.toast(data.msg);
+            //                 }catch(err){
+            //                     $.toast(data.msg,'text');
+            //                 }
+            //             }
+            //         }
+            //     }
+            // })
+        }else{
+            $.alert("手机号码不正确，请您重新输入！");
+            _this.removeAttr('disabled');
+        }
+    });
+    /*
+    安全短信下单
+     */
+    apply.on('click',function(){
+        data.mobile = $('.mobile').val();
+        var mobile = phoneNumber.val();
+        var code = verifyCode.val();
+        if(!mobile.match(/^1[3|4|5|7|8|9]\d{9}$/)){
+            $.alert("手机号码不正确，请您重新输入！");
+            return false;
+        }
+        if(num != code){
+            try{
+                $.alert('验证码不正确，请您重新获取！');
+            }catch(err){
+                $.alert('验证码不正确，请您重新获取！','text');
+            }
+            return false;
+        }
+        flag ++;
+        if(flag != 1)return false;
+        $.ajax({
+            type: 'post',
+            dataType: 'json',
+            data: JSON.stringify(data),
+            url: fileUrl + '/sd/locksmith/add',
+            contentType: 'application/json;charset=UTF-8',
+            success: function (data){
+                console.log(data);
+                if(data == '1') {
+                    $.alert({
+                        title: '提示',
+                        text: '您的资料提交成功,正在审核，请耐心等待！',
+                        onOK: function () {
+                            //点击确认
+                            window.location.href = '/locksmith/login/waitAudit'
+                        }
+                    });
+                } else {
+                    $.alert('注册失败')
+                }
+            }
+        })
+    });
+</script>
+</body>
+
+</html>

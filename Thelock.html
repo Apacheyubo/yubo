@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>等待分配锁匠</title>
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!-- 引入weui样式 -->
+    <link rel="stylesheet" href="lockcss/weui.css">
+	<!-- 引入jq-weui样式 -->
+	<link rel="stylesheet" href="lockcss/jquery-weui.min.css">
+	<!-- 引入全局样式 -->
+    <link rel="stylesheet" href="lockcss/commen.css">
+    <!--引入字体图标库-->
+	<link rel="stylesheet" href="http://at.alicdn.com/t/font_715918_p933z6qfxr.css">
+    <style>
+    	.weui-tab p{
+    		margin:auto;
+    		text-align: center;
+    		padding:2rem 0 ;
+    		font-size:1.3rem;
+    	}
+    	.animation{text-align: center;}
+    	.animation span{font-size:1.5rem;display: block;color:#00BA9D;}
+    	.animation img{width:5rem;margin-top:1rem;}
+        .locksmith_list{padding:1rem 0.5rem 0.5rem;height:4rem;width:82%;margin:auto;}
+		.locksmith_list>ul{display: flex;align-items: center;position:relative;}
+		.locksmith_list>ul>.portrait{border:1px solid #ccc;border-radius: 50%;overflow: hidden;width:3rem;height:3rem;margin-right:1rem;}
+		.locksmith_list>ul>.portrait>img{width:100%;height:100%;}
+		.locksmith_list>ul>li>h3{display: inline-block;font-weight: inherit;}
+
+		.lock_information{color:#D8D8D8;text-align: center;}
+		.lock_information .divider{width:94%;height:3rem;border-bottom: 1px solid #D8D8D8;margin:auto;}
+		.lock_information h3{font-weight: inherit;padding:0.5rem 0;margin-top:-1.5rem;}
+		.lock_information h3>span{background:#fff;padding:0 0.3rem;}
+		.lock_information>ul{width:84%;margin:auto;}
+		.lock_information>ul>li{text-align: left;padding:0.5rem 0;overflow: hidden;}
+		.lock_information>ul>li>i{float:left;width:10%;}
+		.lock_information>ul>li>p{float:left;width:90%;padding:0;font-size:1rem;text-align: left;}
+
+        .locking{display: none;}
+    </style>
+</head>
+<body>
+	<!-- 容器 -->
+	<div class="weui-tab">
+		<div class="waiting">
+            <p>锁匠正在火速前往...</p>
+            <div class='animation'>
+                <!--<span>20:00</span>-->
+                <img src="lockimg/locksmith.gif" alt="">
+            </div>
+        </div>
+        <div class='locking'>
+            <p>锁匠到达 正在开锁...</p>
+            <div class='animation'>
+                <img src="lockimg/locking.gif" alt="" style='width:15rem'>
+            </div>
+        </div>
+		<div class="locksmith_list box" data-lid="_id" style="padding:2rem 0.5rem 0.2rem;">
+            <ul>
+	            <li class="portrait">
+	            	<img src="" alt="" id="locksmithimg">
+	            </li>
+	            <li>
+		            <h3 id="locksmithname"></h3><span style="margin-left:5px;color:#FE6701;"><i class="iconfont icon-icon"></i><span>8.9</span></span>
+		            <span style="color:#D8D8D8;padding:0;display: block;" id="licensenumber"></span>
+	            </li>
+	            <li style="position:absolute;top:0px;right:5px;">
+					<a href="tel:phone" id="locksmithphone"><i class="iconfont icon-dadianhua" style="color:#00b79e;font-size:2.3rem;"></i></a>
+	            </li>
+            </ul>
+        </div>
+        <div class='lock_information'>
+        	<div class='divider'></div>
+        	<h3>
+        		<span>开锁信息</span>
+        	</h3>
+        	<ul>
+        		<li>
+        			<i class='iconfont icon-xiazai19'></i>
+        			<p>
+        				<span id="clientaddress"></span>
+        			</p>
+        		</li>
+        		<li>
+        			<i class='iconfont icon-time'></i>
+        			<p>
+        				<span id="clientaddtime"></span>
+        			</p>
+        		</li>
+        		<li>
+        			<i class='iconfont icon-yaochi01'></i>
+        			<p>
+        				<span id="clienttype"></span>
+        			</p>
+        		</li>
+        	</ul>
+        	<a href="javascript:;" class="weui-btn weui-btn_default waiting" id='cancelOrder' style='width:85%;margin-top:1rem;margin-bottom:1rem;background:none;color:#D8D8D8;'>取消订单</a>
+        </div>
+	</div>
+	<!-- 引入jquery -->
+    <script src='lockjavascript/jquery.min.js'></script>
+	<!-- 引入jq-weui -->
+	<script src='lockjavascript/jquery-weui.min.js'></script>
+	<!-- 引入公共js -->
+	<script src='lockjavascript/commen.js'></script>
+	<script>
+        $('#cancelOrder').click(function(){
+            // $('.waiting').css('display','none');
+            // $('.locking').css('display','block');
+            $.confirm("您确认要取消订单吗?", function() {
+                //点击确认后的回调函数
+                // $.toast("订单已经删除!");
+                 /*
+                *取消订单
+                 */
+                 $.ajax({
+                        type: 'post',
+                        dataType: 'json',
+                        data: {
+                            ubid: ubid,
+                        },
+                        url: '/lockshield/Order/cancelorder',
+                        success: function (msg) {
+                            if(msg.code == 1){
+                                window.location.href = '/lockshield'
+                            }
+                        },
+                    })
+
+            }, function() {
+                //点击取消后的回调函数
+            });
+
+        });
+
+        /**
+         * js获取url参数值
+         */
+        function request(paras) {
+            var url = location.href;
+            var paraString = url.substring(url.indexOf("?") + 1, url.length).split("&");
+            var paraObj = { };
+            for (i = 0; j = paraString[i]; i++) {
+                paraObj[j.substring(0, j.indexOf("=")).toLowerCase()] = j.substring(j.indexOf("=") + 1, j.length);
+            }
+            var returnValue = paraObj[paras.toLowerCase()];
+            if (typeof (returnValue) == "undefined") {
+                return "";
+            } else {
+                return returnValue;
+            }
+        }
+        var ubid = decodeURI(request("ubid"));
+        var orderlounk = decodeURI(request("orderlounk"));
+        var ordertype = decodeURI(request("ordertype"));
+        var orderlist = decodeURI(request("orderlist"));
+
+        //加载页面状态判断
+        $.ajax({
+            type: 'post',
+            dataType: 'json',
+            data: {
+                ubid: ubid,
+            },
+            url: '/lockshield/Order/orderstatus',
+            success: function (data) {
+                console.log(data);
+                if(data.status == 2){
+                    $('.waiting').css('display','none');
+                    $('.locking').css('display','block');
+                }else if(data.status == 3){
+                    clearInterval(time);
+                    $('.waiting').css('display','none');
+                    $('.locking').css('display','block');
+                    window.location.href = '/lockshield/order/pay?ubid='+ubid;
+                }
+            }
+        })
+        //轮询状态查询
+        function obtainMsg(){
+            $.ajax({
+                type: 'post',
+                dataType: 'json',
+                data: {
+                    ubid: ubid,
+                },
+                url: '/lockshield/Order/orderstatus',
+                success: function (data) {
+                    console.log(data);
+                    if(data.status == 2){
+                        $('.waiting').css('display','none');
+                        $('.locking').css('display','block');
+                    }else if(data.status == 3){
+                        clearInterval(time);
+                        $('.waiting').css('display','none');
+                        $('.locking').css('display','block');
+                        window.location.href = '/lockshield/order/pay?ubid='+ubid;
+                    }
+                }
+            })
+        }
+        var time = setInterval(function(){
+            obtainMsg();
+        },5000);
+        if(orderlist ==2){
+            $.ajax({
+                type: 'post',
+                dataType: 'json',
+                data: {
+                    ubid: ubid,
+                },
+                url: '/lockshield/order/orderliststatus',
+                success: function (msg) {
+                    if(msg.code == 1){
+                        $('#locksmithimg').attr('src',imgadress+msg.lockOrder.locksmithphoto);
+						$('#clientaddress').text(msg.clientOrder.address);
+                        $('#clientaddtime').text(msg.clientOrder.addtime);
+                        $('#locksmithname').text(msg.lockOrder.name);
+                        $('#licensenumber').text('上岗证编号：'+msg.lockOrder.licensenumber);
+                        $('#locksmithphone').attr('href','tel:'+ msg.lockOrder.mobile);
+                        if(msg.clientOrder.ordertype == 1){
+                            $('#clienttype').text('开锁');
+                        }else if(msg.clientOrder.ordertype == 2){
+                            $('#clienttype').text('换锁');
+                        }else if(msg.clientOrder.ordertype == 3){
+                            $('#clienttype').text('预约');
+                        }
+                    }
+                },
+            })
+
+		}else{
+            if(orderlounk == 1){
+                $.ajax({
+                    type: 'post',
+                    dataType: 'json',
+                    data: {
+                        ubid: ubid,
+                    },
+                    url: '/lockshield/Distance/handorder',
+                    success: function (msg) {
+                        console.log(msg,111)
+                        if(msg.code == 1){
+                            if(msg.lockOrder){
+                                $('#locksmithimg').attr('src',imgadress+msg.lockOrder.locksmithphoto);
+                                $('#clientaddress').text(msg.clientOrder.address);
+                                $('#clientaddress').text(msg.clientOrder.address);
+                                $('#clientaddtime').text(msg.clientOrder.addtime);
+                                $('#locksmithname').text(msg.lockOrder.name);
+                                $('#licensenumber').text('上岗证编号：'+msg.lockOrder.licensenumber);
+                                $('#locksmithphone').attr('href','tel:'+ msg.lockOrder.mobile);
+                                if(msg.clientOrder.ordertype == 1){
+                                    $('#clienttype').text('开锁');
+                                }else if(msg.clientOrder.ordertype == 2){
+                                    $('#clienttype').text('换锁');
+                                }else if(msg.clientOrder.ordertype == 3){
+                                    $('#clienttype').text('预约');
+                                }
+							}else{
+                                // window.location.href = '/lockshield/order/wait';
+							}
+
+                        }
+                    },
+                })
+
+            }else  if(ordertype == 3){
+                $.ajax({
+                    type: 'post',
+                    dataType: 'json',
+                    data: {
+                        ubid: ubid,
+                    },
+                    url: '/lockshield/Distance/handorder',
+                    success: function (msg) {
+                        if(msg.code == 1){
+                            $('#locksmithimg').attr('src',imgadress+msg.lockOrder.locksmithphoto);
+                            $('#clientaddress').text(msg.clientOrder.address);
+                            $('#clientaddtime').text(msg.clientOrder.addtime);
+                            $('#locksmithname').text(msg.lockOrder.name);
+                            $('#licensenumber').text('上岗证编号：'+msg.lockOrder.licensenumber);
+                            $('#locksmithphone').attr('href','tel:'+ msg.lockOrder.mobile);
+                            if(msg.clientOrder.ordertype == 1){
+                                $('#clienttype').text('开锁');
+                            }else if(msg.clientOrder.ordertype == 2){
+                                $('#clienttype').text('换锁');
+                            }else if(msg.clientOrder.ordertype == 3){
+                                $('#clienttype').text('预约');
+                            }
+                        }
+                    },
+                })
+            }else{
+				$.ajax({
+					type: 'post',
+					dataType: 'json',
+					data: {
+						ubid: ubid,
+					},
+					url: '/lockshield/Distance/ordermatching',
+					success: function (msg) {
+                         if(msg.code == 1) {
+                                // alert(1)
+                                if(msg.data == null)window.location.href = '/lockshield/order/wait';
+                                $('#locksmithimg').attr('src', imgadress + msg.data.lockOrder.locksmithphoto);
+                                $('#clientaddress').text(msg.data.clientOrder.address);
+                                $('#clientaddtime').text(msg.data.clientOrder.addtime);
+                                $('#locksmithname').text(msg.data.lockOrder.name);
+                                $('#licensenumber').text('上岗证编号：' + msg.data.lockOrder.licensenumber);
+                                $('#locksmithphone').attr('href', 'tel:' + msg.data.lockOrder.mobile);
+                                if (msg.data.clientOrder.ordertype == 1) {
+                                    $('#clienttype').text('开锁');
+                                } else if (msg.data.clientOrder.ordertype == 2) {
+                                    $('#clienttype').text('换锁');
+                                } else if (msg.data.clientOrder.ordertype == 3) {
+                                    $('#clienttype').text('预约');
+                                }
+                            }else if(msg.code == 2){
+                             // alert(2)
+                                $('#locksmithimg').attr('src', imgadress + msg.data.lockOrder.locksmithphoto);
+                                $('#clientaddress').text(msg.data.clientOrder.address);
+                                $('#clientaddtime').text(msg.data.clientOrder.addtime);
+                                $('#locksmithname').text(msg.data.lockOrder.name);
+                                $('#licensenumber').text('上岗证编号：' + msg.data.lockOrder.licensenumber);
+                                $('#locksmithphone').attr('href', 'tel:' + msg.data.lockOrder.mobile);
+                                if (msg.data.clientOrder.ordertype == 1) {
+                                    $('#clienttype').text('开锁');
+                                } else if (msg.data.clientOrder.ordertype == 2) {
+                                    $('#clienttype').text('换锁');
+                                } else if (msg.data.clientOrder.ordertype == 3) {
+                                    $('#clienttype').text('预约');
+                                }
+
+							}
+
+					},
+				})
+            }
+		}
+
+	</script>
+</body>
+</html>

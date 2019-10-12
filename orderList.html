@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>订单列表</title>
+</head>
+<body>
+	
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>等待分配锁匠</title>
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!-- 引入weui样式 -->
+    <link rel="stylesheet" href="lockcss/weui.css">
+    <!-- 引入jq-weui样式 -->
+    <link rel="stylesheet" href="lockcss/jquery-weui.min.css">
+    <!-- 引入全局样式 -->
+    <link rel="stylesheet" href="lockcss/commen.css">
+    <!--引入字体图标库-->
+	<link rel="stylesheet" href="http://at.alicdn.com/t/font_715918_p933z6qfxr.css">
+    <style>
+    	/*附近锁匠页*/
+        .list{border-top:1px solid #D8D8D8;}
+        .box{border:1px solid #D8D8D8;}
+        .locksmith_list{padding:1rem 0.5rem 0.5rem;border-bottom: 1px solid #D8D8D8;height:4rem;width:82%;margin:auto;}
+        .locksmith_list>ul{display: flex;align-items: center;position:relative;}
+        .locksmith_list>ul>.portrait{border:1px solid #ccc;border-radius: 50%;overflow: hidden;width:3rem;height:3rem;margin-right:1rem;}
+        .locksmith_list>ul>.portrait>img{width:100%;height:100%;}
+        .locksmith_list>ul>li>h3{display: inline-block;font-weight: inherit;}
+        .state{color:red;}
+    </style>
+</head>
+<body>
+	<!-- 容器 -->
+	<div class="weui-tab">
+		<div class="detail">
+
+            <volist name="orderlist" id="vo" empty="$empty">
+                <!--{$vo.id}:{$vo.name}<br/>-->
+              <a href="/lockshield/order/details?ubid={$vo.ubid}&&status={$vo.status}">
+                   <div class="locksmith_list">
+                       <ul>
+                           <li class="portrait">
+                               <img src="{$vo.locksmithphoto}" alt="">
+                           <li>
+                               <h3>{$vo.name}</h3><span style="margin-left:5px;color:#FE6701;"><i class="iconfont icon-icon"></i><span>8.9</span></span>
+                               <p style="color:#D8D8D8;">上岗证编号:{$vo.licensenumber}</p>
+                           </li>
+                           <li style="position:absolute;top:-5px;right:0;">
+                               <h3 class='state'>
+                                   <switch name="vo.status">
+                                       <case value="1">未开锁</case>
+                                       <case value="2">锁匠开锁</case>
+                                       <case value="3">未支付</case>
+                                       <case value="4">待评论</case>
+                                       <case value="5">已完成</case>
+                                       <case value="6">已取消</case>
+                                   </switch>
+
+                               </h3>
+                           </li>
+                       </ul>
+                   </div>
+              </a>
+           </volist>
+          <!-- <a href="#">
+               <div class="locksmith_list">
+                   <ul>
+                       <li class="portrait">
+                           <img src="../../img/swiper-1.jpg" alt="">
+                       <li>
+                           <h3>李老大</h3><span style="margin-left:5px;color:#FE6701;"><i class="iconfont icon-icon"></i><span>8.9</span></span>
+                           <p style="color:#D8D8D8;">上岗证编号:123456</p>
+                       </li>
+                       <li style="position:absolute;top:-5px;right:0;">
+                           <h3 class='state'>未支付</h3>
+                       </li>
+                   </ul>
+               </div>
+           </a>
+           <a href="#">
+               <div class="locksmith_list">
+                   <ul>
+                       <li class="portrait">
+                           <img src="../../img/swiper-1.jpg" alt="">
+                       <li>
+                           <h3>李老大</h3><span style="margin-left:5px;color:#FE6701;"><i class="iconfont icon-icon"></i><span>8.9</span></span>
+                           <p style="color:#D8D8D8;">上岗证编号:123456</p>
+                       </li>
+                       <li style="position:absolute;top:-5px;right:0;">
+                           <h3 class='state'>未支付</h3>
+                       </li>
+                   </ul>
+               </div>
+           </a>-->
+        </div>
+	</div>
+
+
+</body>
+</html>

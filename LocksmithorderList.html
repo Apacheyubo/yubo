@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>订单详情</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!-- 引入weui样式 -->
+    <link rel="stylesheet" href="lockcss/weui.css">
+    <!-- 引入jq-weui样式 -->
+    <link rel="stylesheet" href="lockcss/jquery-weui.min.css">
+    <!-- 引入全局样式 -->
+    <link rel="stylesheet" href="lockcss/commen.css">
+    <!--引入字体图标库-->
+    <link rel="stylesheet" href="http://at.alicdn.com/t/font_715918_v6xcoz8567.css">
+    <style>
+        .lock_information {
+            color: #333;
+            text-align: center;
+            padding-top: 1rem;
+        }
+
+        .lock_information .over {
+            color: #dbdbdb;
+        }
+
+        .lock_information h3 {
+            font-weight: inherit;
+            padding: 0.5rem 0;
+            margin-top: -1.5rem;
+        }
+
+        .lock_information h3>span {
+            background: #fff;
+            padding: 0 0.3rem;
+        }
+
+        .lock_information>ul {
+            width: 85%;
+            margin: 0 auto;
+            padding: 0.5rem;
+            overflow: hidden;
+            border-bottom: 1px solid #dbdbdb;
+        }
+
+        .lock_information>ul>li {
+            text-align: left;
+            overflow: hidden;
+            position: relative;
+            padding: 0.3rem 0;
+        }
+
+        .lock_information>ul>li>i {
+            float: left;
+            width: 10%;
+        }
+
+        .lock_information>ul>li>p {
+            float: left;
+            width: 70%;
+            padding: 0;
+            font-size: 1rem;
+            text-align: left;
+        }
+
+        .lock_information>ul>li>p>.the_time {
+            margin-left: 1rem;
+        }
+
+        .lock_information>ul>li>p>.time {
+            color: red;
+            margin-left: 1rem;
+        }
+
+        .lock_information>ul>li>a {
+            position: absolute;
+            top: -6px;
+            right: 5px;
+            color: #00b79e;
+        }
+
+        .lock_information>ul>li>span {
+            position: absolute;
+            top: -3px;
+            right: 0;
+            color: #dbdbdb;
+        }
+
+        .lock_information>ul>li>a>.iconfont {
+            font-size: 1.8rem;
+        }
+    </style>
+</head>
+
+<body>
+<!-- 容器 -->
+<div class="weui-tab">
+    <!-- 顶部搜索 -->
+    <!--<div class="weui-search-bar" id="searchBar">-->
+    <!--<form class="weui-search-bar__form">-->
+    <!--<div class="weui-search-bar__box">-->
+    <!--<i class="weui-icon-search"></i>-->
+    <!--<input type="search" class="weui-search-bar__input" id="searchInput" placeholder="搜索" required="">-->
+    <!--<a href="javascript:" class="weui-icon-clear" id="searchClear"></a>-->
+    <!--</div>-->
+    <!--<label class="weui-search-bar__label" id="searchText">-->
+    <!--<i class="weui-icon-search"></i>-->
+    <!--<span>搜索</span>-->
+    <!--</label>-->
+    <!--</form>-->
+    <!--<a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">取消</a>-->
+    <!--</div>-->
+    <!-- 开锁信息 -->
+    <div class='lock_information'>
+
+        <!--待支付-->
+        <volist name="oederpay" id="data" >
+            <!--{$data.id}:{$data.name}<br/>-->
+            <ul>
+                <li>
+                    <i class='iconfont icon-xiazai19'></i>
+                    <p>
+                        <span>{$data.address}</span>
+                    </p>
+                    <!--<a href="tel:{$data.mobilephone}">-->
+                        <!--<i class='iconfont icon-dadianhua'></i>-->
+                    <!--</a>-->
+                    <a style="margin-top: 0.7rem" href="/locksmith/Native/payqrcode?ubid={$data.ubid}">
+                        <switch name="data.status">
+                            <case value="2">未开锁</case>
+                            <case value="3">待支付</case>
+                            <case value="4">待评论</case>
+                            <case value="5">已完成</case>
+                            <case value="6">已取消</case>
+                        </switch>
+                     </a>
+                </li>
+                <li>
+                    <i class='iconfont icon-time'></i>
+                    <p>
+                        <!--<span>2018-05-21</span><span class='the_time'>18:45:58</span>-->
+                        <span>{$data.addtime}</span>
+                    </p>
+                </li>
+                <li>
+                    <i class='iconfont icon-yaochi01'></i>
+                    <p>
+							<span>
+                       <switch name="data.ordertype">
+                                   <case value="1">开锁</case>
+                                   <case value="2">换锁</case>
+                                    <case value="3">预约</case>
+                                    <case value="4">代客下单</case>
+                        </switch>
+                            </span>
+                    </p>
+                    <a href="orderDetial.html?ubid={$data.ubid}">
+                        <i class='iconfont icon-jinggaocopy' style='color:red;'></i>
+                    </a>
+                </li>
+            </ul>
+        </volist>
+        <!--<ul>-->
+        <!--<li>-->
+        <!--<i class='iconfont icon-xiazai19'></i>-->
+        <!--<p>-->
+        <!--<span>雁塔区高新一路正信大厦A座202雁塔区高新一路正信大厦A座202</span>-->
+        <!--</p>-->
+        <!--<a href="tel:13892917106">-->
+        <!--<i class='iconfont icon-dadianhua'></i>-->
+        <!--</a>-->
+        <!--</li>-->
+        <!--<li>-->
+        <!--<i class='iconfont icon-time'></i>-->
+        <!--<p>-->
+        <!--<span>2018-05-21</span><span class='the_time'>18:45:58</span>-->
+        <!--</p>-->
+        <!--</li>-->
+        <!--<li>-->
+        <!--<i class='iconfont icon-yaochi01'></i>-->
+        <!--<p>-->
+        <!--<span>开锁</span>-->
+        <!--</p>-->
+        <!--<a href="paidDetial.html">-->
+        <!--<i class='iconfont icon-jinggaocopy' style='color:red;'></i>-->
+        <!--</a>-->
+        <!--</li>-->
+        <!--</ul>-->
+        <volist name="orderfinish" id="data">
+            <ul>
+                <li>
+                    <i class='iconfont icon-xiazai19'></i>
+                    <p>
+                        <span>{$data.address}</span>
+                    </p>
+
+                    <span style="margin-top: 8px;">
+                        已结束
+                    </span>
+                </li>
+                <li>
+                    <i class='iconfont icon-time'></i>
+                    <p>
+                        <!--<span>2018-05-21</span><span class='the_time'>18:45:58</span>-->
+                        <span>{$data.addtime}</span>
+                    </p>
+                </li>
+                <li>
+                    <i class='iconfont icon-yaochi01'></i>
+                    <p>
+							<span>
+                            <switch name="data.ordertype">
+                                   <case value="1">开锁</case>
+                                   <case value="2">换锁</case>
+                                    <case value="3">预约</case>
+                        </switch>
+                        </span>
+                    </p>
+                </li>
+            </ul>
+        </volist>
+
+        <volist name="closeorder" id="data">
+            <ul class='over'>
+                <li>
+                    <i class='iconfont icon-xiazai19'></i>
+                    <p>
+                        <span>{$data.address}</span>
+                    </p>
+
+                    <span style="margin-top: 8px;">
+                        已取消
+                    </span>
+                </li>
+                <li>
+                    <i class='iconfont icon-time'></i>
+                    <p>
+                        <!--<span>2018-05-21</span><span class='the_time'>18:45:58</span>-->
+                        <span>{$data.addtime}</span>
+                    </p>
+                </li>
+                <li>
+                    <i class='iconfont icon-yaochi01'></i>
+                    <p>
+							<span>
+                            <switch name="data.ordertype">
+                                   <case value="1">开锁</case>
+                                   <case value="2">换锁</case>
+                                    <case value="3">预约</case>
+                        </switch>
+                        </span>
+                    </p>
+                </li>
+            </ul>
+        </volist>
+
+    </div>
+</div>
+<!--&lt;!&ndash; 引入jquery &ndash;&gt;-->
+<!--<script src='lockjavascript/jquery.min.js'></script>-->
+<!--&lt;!&ndash; 引入jq-weui &ndash;&gt;-->
+<!--<script src='lockjavascript/jquery-weui.min.js'></script>-->
+<!--&lt;!&ndash; 引入swiper &ndash;&gt;-->
+<!--<script src='lockjavascript/swiper.min.js'></script>-->
+<!--&lt;!&ndash; 引入公共js &ndash;&gt;-->
+<!--<script src='lockjavascript/commen.js'></script>-->
+<script>
+</script>
+</body>
+
+</html>
