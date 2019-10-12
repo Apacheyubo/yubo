@@ -1,0 +1,4 @@
+　　PuTTY 0.70 中文版 更新日志：2017-07-17
+　　安全修复:Windows PuTTY二进制文件不再容易受到特定命名的DLL在同一个目录中的劫持；
+　　Windows PuTTY再次支持打印；
+　　Windows PuTTY接受当前代码页之外的键盘输入。
